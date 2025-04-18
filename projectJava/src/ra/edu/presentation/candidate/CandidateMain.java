@@ -1,6 +1,9 @@
 package ra.edu.presentation.candidate;
 
+import ra.edu.MainApplication;
+
 import static ra.edu.MainApplication.scanner;
+import static ra.edu.utils.FileUtil.writeToFile;
 import static ra.edu.utils.ThreadUtil.pause;
 
 public class CandidateMain {
@@ -25,10 +28,20 @@ public class CandidateMain {
                 case 4:
                     System.out.println("\nLoading...");
                     pause(1);
+                    logoutCandidate();
                     break;
                 default:
                     System.out.println("Không hợp lệ, vui lòng chọn từ 1 đến 4.");
             }
         } while (choice != 4);
+    }
+
+    public static void logoutCandidate() {
+        writeToFile("");
+
+        System.out.println("Bạn đã đăng xuất thành công.");
+        pause(1);
+
+        MainApplication.displayMenuApplication();
     }
 }

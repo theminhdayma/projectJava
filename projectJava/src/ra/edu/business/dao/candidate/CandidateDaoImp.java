@@ -160,8 +160,14 @@ public class CandidateDaoImp implements CandidateDao {
                 candidate.setId(rs.getInt("id"));
                 candidate.setName(rs.getString("name"));
                 candidate.setEmail(rs.getString("email"));
+                candidate.setPhone(rs.getString("phone"));
+                candidate.setExperience(rs.getInt("experience"));
+                // Set Active enum từ status string
+                String status = rs.getString("active");
+                candidate.setActive("ACTIVE".equalsIgnoreCase(status) ? Active.UNLOCKED : Active.LOCKED);
                 candidateList.add(candidate);
             }
+
         } catch (SQLException e) {
             System.err.println("Lỗi phân trang ứng viên: " + e.getMessage());
         } finally {

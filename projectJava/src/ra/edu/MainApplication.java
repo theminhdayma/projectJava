@@ -1,9 +1,13 @@
 package ra.edu;
 
 import ra.edu.business.model.account.Account;
+import ra.edu.business.model.candidate.Candidate;
 import ra.edu.business.service.admin.AdminService;
 import ra.edu.business.service.admin.AdminServiceImp;
+import ra.edu.business.service.candidate.CandidateService;
+import ra.edu.business.service.candidate.CandidateServiceImp;
 import ra.edu.presentation.admin.AdminMain;
+import ra.edu.presentation.candidate.CandidateMain;
 
 import java.util.Scanner;
 
@@ -16,10 +20,26 @@ public class MainApplication {
 
     public static void main(String[] args) {
         String token = readFromFile();
-        if (token != null) {
-            System.out.println("\nDuy trì đăng nhập với tài khoản: " + token);
-            AdminMain.displayMenuManagentAdmin();
+        if (token != null && !token.isEmpty()) {
+            String[] parts = token.split(":");
+            if (parts.length == 2) {
+                String role = parts[0];
+                String username = parts[1];
+                System.out.println("\nDuy trì đăng nhập với tài khoản: " + username);
+                if ("ADMIN".equalsIgnoreCase(role)) {
+                    AdminMain.displayMenuManagentAdmin();
+                    return;
+                } else if ("CANDIDATE".equalsIgnoreCase(role)) {
+                    CandidateMain.displayMenuCadidateManagent();
+                    return;
+                } else {
+                    System.out.println("Vai trò không hợp lệ trong token.");
+                }
+            } else {
+                System.out.println("Định dạng token không hợp lệ.");
+            }
         }
+
         displayMenuApplication();
     }
 
@@ -39,8 +59,10 @@ public class MainApplication {
                     loginAdmin();
                     break;
                 case 2:
+                    loginCandidate();
                     break;
                 case 3:
+                    registerCandidate();
                     break;
                 case 4:
                     System.out.println("Tạm biệt!");
@@ -75,5 +97,48 @@ public class MainApplication {
                 System.out.println("Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.\n");
             }
         } while (admin == null);
+    }
+
+    public static void loginCandidate() {
+        Account candidate = null;
+        CandidateService candidateService = new CandidateServiceImp();
+
+        do {
+            System.out.println("==== Đăng nhập ứng viên ====");
+            Account inputCandidate = new Account();
+            inputCandidate.inputData();
+
+            boolean isLogin = candidateService.loginCandidate(inputCandidate.getUsername(), inputCandidate.getPassword());
+            if (isLogin) {
+                String token = "CANDIDATE: " + inputCandidate.getUsername();
+                writeToFile(token);
+                System.out.println("Đăng nhập thành công với vai trò ứng viên.");
+                pause(1);
+                candidate = inputCandidate;
+                CandidateMain.displayMenuCadidateManagent();
+            } else {
+                System.out.println("Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.\n");
+            }
+        } while (candidate == null);
+    }
+
+    public static void registerCandidate() {
+        Candidate candidate = null;
+        CandidateService candidateService = new CandidateServiceImp();
+
+        do {
+            System.out.println("==== Đăng ký ứng viên ====");
+            Candidate inputCandidate = new Candidate();
+            inputCandidate.inputData();
+
+            boolean isRegister = candidateService.save(inputCandidate);
+            if (isRegister) {
+                System.out.println("Đăng ký thành công với vai trò ứng viên.");
+                pause(1);
+                candidate = inputCandidate;
+            } else {
+                System.out.println("Đăng ký thất bại. Vui lòng thử lại.\n");
+            }
+        } while (candidate == null);
     }
 }

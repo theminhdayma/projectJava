@@ -1,6 +1,9 @@
 package ra.edu.presentation.admin;
 
 import ra.edu.MainApplication;
+import ra.edu.presentation.admin.application.ApplicationUI;
+import ra.edu.presentation.admin.candidate.CandidateUI;
+import ra.edu.presentation.admin.recruitmentPosition.RecruitmentPositionUI;
 import ra.edu.presentation.admin.technology.TechnologyUI;
 
 import static ra.edu.MainApplication.scanner;
@@ -24,10 +27,13 @@ public class AdminMain {
                     TechnologyUI.displayMenuTechnology();
                     break;
                 case 2:
+                    CandidateUI.displayMenuCadidate();
                     break;
                 case 3:
+                    RecruitmentPositionUI.displayMenuRecruitmentPosition();
                     break;
                 case 4:
+                    ApplicationUI.displayMenuApplication();
                     break;
                 case 5:
                     System.out.println("\nLoading...");

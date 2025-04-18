@@ -116,15 +116,16 @@ public class Candidate implements Serializable {
     }
 
     public void inputData() {
+        this.account = new Account();
         this.name = CandidateValidate.inputValidName(scanner);
         this.email = CandidateValidate.inputValidEmail(scanner);
         this.phone = CandidateValidate.inputValidPhone(scanner);
         this.experience = Validator.validateInputInt(scanner, "Nhập vào năm kinh nghiệm: ");
         this.gender = CandidateValidate.inputValidGender(scanner);
+        System.out.print("Nhập vào mô tả bản thân: ");
         this.description = scanner.nextLine();
         this.dob = CandidateValidate.inputValidDob(scanner);
+        this.account.setUsername(this.email);
         this.account.setPassword(CandidateValidate.inputValidPassword(scanner));
     }
-
-
 }

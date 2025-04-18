@@ -53,13 +53,18 @@ public class CandidateUI {
         } while (choice != 6);
     }
 
-    private static Candidate findCandidateById(int id) {
-        Candidate candidate = candidateService.getCandidateById(id);
-        if (candidate == null) {
-            System.out.println("Không tìm thấy công nghệ với ID: " + id + " Vui lòng thử lại.");
-        }
+    private static Candidate findCandidateById() {
+        Candidate candidate = null;
+        do {
+            int id = Validator.validateInputInt(scanner, "Nhập ID ứng viên cần xử lý: ");
+            candidate = candidateService.getCandidateById(id);
+            if (candidate == null) {
+                System.out.println("Không tìm thấy ứng viên với ID: " + id + ". Vui lòng thử lại.");
+            }
+        } while (candidate == null);
         return candidate;
     }
+
 
     private static void showAllCandidate() {
         int totalPage = candidateService.getTotalPage(LIMIT);
@@ -110,8 +115,7 @@ public class CandidateUI {
     }
 
     private static void lockOrUnlockCandidate() {
-        int id = Validator.validateInputInt(scanner, "Nhập ID ứng viên cần xử lý: ");
-        Candidate candidate = findCandidateById(id);
+        Candidate candidate = findCandidateById();
         if (candidate == null) {
             System.out.println("Ứng viên không tồn tại.");
             return;
@@ -128,7 +132,7 @@ public class CandidateUI {
             switch (choice) {
                 case 1:
                     if (candidate.getActive() == Active.UNLOCKED) {
-                        if (candidateService.lockCandidateAccount(id)) {
+                        if (candidateService.lockCandidateAccount(candidate.getId())) {
                             System.out.println("Đã khóa tài khoản thành công.");
                         } else {
                             System.out.println("Khóa tài khoản thất bại.");
@@ -140,7 +144,7 @@ public class CandidateUI {
 
                 case 2:
                     if (candidate.getActive() == Active.LOCKED) {
-                        if (candidateService.unlockCandidateAccount(id)) {
+                        if (candidateService.unlockCandidateAccount(candidate.getId())) {
                             System.out.println("Đã mở khóa tài khoản thành công.");
                         } else {
                             System.out.println("Mở khóa tài khoản thất bại.");
@@ -162,9 +166,7 @@ public class CandidateUI {
     }
 
     private static void resetCandidatePassword() {
-        int id = Validator.validateInputInt(scanner, "Nhập ID ứng viên cần reset mật khẩu: ");
-        Candidate candidate = findCandidateById(id);
-        if (candidate == null) return;
+        Candidate candidate = findCandidateById();
 
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?/~";
         SecureRandom random = new SecureRandom();
@@ -178,7 +180,7 @@ public class CandidateUI {
         String password = newPassword.toString();
         System.out.println("Mật khẩu mới cho ứng viên là: " + password);
 
-        boolean success = candidateService.resetCandidatePassword(id, password);
+        boolean success = candidateService.resetCandidatePassword(candidate.getId(), password);
         if (success) {
             System.out.println("Reset mật khẩu thành công.");
         } else {
