@@ -1,6 +1,6 @@
 package ra.edu;
 
-import ra.edu.business.model.admin.Admin;
+import ra.edu.business.model.account.Account;
 import ra.edu.business.service.admin.AdminService;
 import ra.edu.business.service.admin.AdminServiceImp;
 import ra.edu.presentation.admin.AdminMain;
@@ -54,18 +54,18 @@ public class MainApplication {
     }
 
     public static void loginAdmin() {
-        Admin admin = null;
+        Account admin = null;
         AdminService adminService = new AdminServiceImp();
         adminService.initAdmin();
 
         do {
             System.out.println("==== Đăng nhập quản trị viên ====");
-            Admin inputAdmin = new Admin();
+            Account inputAdmin = new Account();
             inputAdmin.inputData();
 
-            boolean isLogin = adminService.loginAdmin(inputAdmin.getAdminName(), inputAdmin.getPassword());
+            boolean isLogin = adminService.loginAdmin(inputAdmin.getUsername(), inputAdmin.getPassword());
             if (isLogin) {
-                String token = " Admin :" + inputAdmin.getAdminName();
+                String token = "ADMIN: " + inputAdmin.getUsername();
                 writeToFile(token);
                 System.out.println("Đăng nhập thành công với vai trò quản trị viên.");
                 pause(1);

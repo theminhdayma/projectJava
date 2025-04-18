@@ -1,6 +1,10 @@
 package ra.edu.business.model.technology;
 
+import ra.edu.validate.StringRule;
+
 import static ra.edu.MainApplication.scanner;
+import static ra.edu.validate.Validator.validateInputString;
+import static ra.edu.validate.technology.TechnologyValidate.checkTechnologyName;
 
 public class Technology {
     private int id;
@@ -39,8 +43,15 @@ public class Technology {
     }
 
     public void inputData() {
-        System.out.print("Nhập tên công nghệ: ");
-        this.name = scanner.nextLine();
+        StringRule rule = new StringRule(3, 50);
+
+        while (true) {
+            String input = validateInputString(scanner, "Nhập tên công nghệ:", rule);
+            if (checkTechnologyName(input)) {
+                this.name = input;
+                break;
+            }
+        }
     }
 
     @Override

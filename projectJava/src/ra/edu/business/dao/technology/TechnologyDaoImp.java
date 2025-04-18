@@ -9,7 +9,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TechnologyDaoImp implements TechnologyDao {
-    public static final int PAGE = 5;
+
+    @Override
+    public boolean checkNameTechnology(Technology technology) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL check_name_technology(?)}");
+            callSt.setString(1, technology.getName());
+
+            callSt.execute();
+
+            return true;
+        } catch (SQLException e) {
+            if ("45000".equals(e.getSQLState())) {
+                System.err.println(e.getMessage());
+            } else {
+                System.err.println("Lỗi khác: " + e.getMessage());
+            }
+            return false;
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+    }
+
 
     @Override
     public List<Technology> readAll() {
@@ -18,16 +42,21 @@ public class TechnologyDaoImp implements TechnologyDao {
 
     @Override
     public boolean save(Technology technology) {
+        if (!checkNameTechnology(technology)) {
+            return false;
+        }
+
         Connection conn = null;
         CallableStatement callSt = null;
         try {
             conn = ConnectionDB.openConnection();
             callSt = conn.prepareCall("CALL add_technology(?)");
             callSt.setString(1, technology.getName());
+
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Lỗi khi lưu công nghệ: " + e.getMessage());
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -36,6 +65,10 @@ public class TechnologyDaoImp implements TechnologyDao {
 
     @Override
     public boolean update(Technology technology) {
+        if (!checkNameTechnology(technology)) {
+            return false;
+        }
+
         Connection conn = null;
         CallableStatement callSt = null;
         try {

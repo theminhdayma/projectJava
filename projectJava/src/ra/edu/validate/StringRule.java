@@ -1,8 +1,8 @@
 package ra.edu.validate;
 
 public class StringRule {
-    private final int minLength;
-    private final int maxLength;
+    final int minLength;
+    final int maxLength;
 
     public StringRule(int minLength, int maxLength) {
         this.minLength = minLength;

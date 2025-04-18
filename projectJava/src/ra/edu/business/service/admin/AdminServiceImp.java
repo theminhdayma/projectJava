@@ -2,7 +2,7 @@ package ra.edu.business.service.admin;
 
 import ra.edu.business.dao.admin.AdminDao;
 import ra.edu.business.dao.admin.AdminDaoImpl;
-import ra.edu.business.model.admin.Admin;
+import ra.edu.business.model.account.Account;
 
 import java.util.List;
 
@@ -14,22 +14,22 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public List<Admin> readAll() {
+    public List<Account> readAll() {
         return adminDao.readAll();
     }
 
     @Override
-    public boolean save(Admin admin) {
+    public boolean save(Account admin) {
         return adminDao.save(admin);
     }
 
     @Override
-    public boolean update(Admin admin) {
+    public boolean update(Account admin) {
         return adminDao.update(admin);
     }
 
     @Override
-    public boolean delete(Admin admin) {
+    public boolean delete(Account admin) {
         return adminDao.delete(admin);
     }
 

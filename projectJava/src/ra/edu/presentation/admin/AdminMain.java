@@ -1,7 +1,7 @@
 package ra.edu.presentation.admin;
 
 import ra.edu.MainApplication;
-import ra.edu.presentation.technology.TechnologyUI;
+import ra.edu.presentation.admin.technology.TechnologyUI;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.FileUtil.writeToFile;
@@ -30,6 +30,8 @@ public class AdminMain {
                 case 4:
                     break;
                 case 5:
+                    System.out.println("\nLoading...");
+                    pause(1);
                     logoutAdmin();
                     break;
                 default:

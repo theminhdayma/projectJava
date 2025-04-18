@@ -46,4 +46,9 @@ public class TechnologyServiceImp implements TechnologyService {
     public Technology getTechnologyById(int id) {
         return technologyDao.getTechnologyById(id);
     }
+
+    @Override
+    public boolean checkNameTechnology(Technology technology) {
+        return technologyDao.checkNameTechnology(technology);
+    }
 }
