@@ -14,11 +14,7 @@ public class Validator {
             try {
                 String input = scanner.nextLine().trim();
                 int number = Integer.parseInt(input);
-                if (number >= 0) {
-                    return number;
-                } else {
-                    System.err.println("Vui lòng nhập số nguyên dương lớn hơn hoặc bằng 0.");
-                }
+                return number;
             } catch (NumberFormatException e) {
                 System.err.println("Không phải số nguyên, yêu cầu nhập lại!");
             } catch (Exception e) {
@@ -66,20 +62,6 @@ public class Validator {
         }
     }
 
-    public static float validateInputFloat(Scanner scanner, String message) {
-        System.out.println(message);
-        while (true) {
-            try {
-                String input = scanner.nextLine().trim();
-                return Float.parseFloat(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Không phải số thực float, yêu cầu nhập lại!");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static boolean validateInputBoolean(Scanner scanner, String message) {
         System.out.println(message + " (Nhập true/false)");
         while (true) {
@@ -96,36 +78,5 @@ public class Validator {
             }
         }
     }
-
-    public static LocalDate validateInputLocalDate(Scanner sc, String message){
-        System.out.println(message);
-
-        do {
-            try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                return LocalDate.parse(sc.nextLine(), formatter);
-            } catch (DateTimeParseException e) {
-                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập lại");
-            } catch (Exception e) {
-                e.fillInStackTrace();
-            }
-        }while (true);
-    }
-
-    public static <T extends Enum<T>> T validateEnumInput(Scanner sc, String message, Class<T> enumClass) {
-        System.out.println(message + " " + Arrays.toString(enumClass.getEnumConstants()));
-
-        do {
-            try {
-                String input = sc.nextLine().trim().toUpperCase();
-
-                return Enum.valueOf(enumClass, input);
-
-            } catch (IllegalArgumentException e) {
-                System.err.println("Lỗi: Giá trị không hợp lệ. Vui lòng nhập một trong " + Arrays.toString(enumClass.getEnumConstants()));
-            }
-        } while (true);
-    }
-
 }
 

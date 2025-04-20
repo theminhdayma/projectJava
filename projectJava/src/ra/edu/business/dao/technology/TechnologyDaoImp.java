@@ -36,11 +36,6 @@ public class TechnologyDaoImp implements TechnologyDao {
 
 
     @Override
-    public List<Technology> readAll() {
-        return List.of();
-    }
-
-    @Override
     public boolean save(Technology technology) {
         if (!checkNameTechnology(technology)) {
             return false;

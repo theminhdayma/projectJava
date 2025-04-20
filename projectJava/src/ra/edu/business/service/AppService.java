@@ -3,7 +3,6 @@ package ra.edu.business.service;
 import java.util.List;
 
 public interface AppService<T> {
-    List<T> readAll();
 
     boolean save(T t);
 

@@ -3,7 +3,6 @@ package ra.edu.business.dao;
 import java.util.List;
 
 public interface AppDao<T> {
-    List<T> readAll();
 
     boolean save(T t);
 

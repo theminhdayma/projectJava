@@ -14,11 +14,6 @@ public class AdminServiceImp implements AdminService {
     }
 
     @Override
-    public List<Account> readAll() {
-        return adminDao.readAll();
-    }
-
-    @Override
     public boolean save(Account admin) {
         return adminDao.save(admin);
     }

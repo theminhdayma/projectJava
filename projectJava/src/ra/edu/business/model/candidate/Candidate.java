@@ -19,12 +19,11 @@ public class Candidate implements Serializable {
     private Gender gender;
     private String description;
     private LocalDate dob;
-    private Active active;
 
     public Candidate() {
     }
 
-    public Candidate(int id, Account account, String name, String email, String password, String phone, int experience, Gender gender, String description, LocalDate dob, Active active) {
+    public Candidate(int id, Account account, String name, String email, String phone, int experience, Gender gender, String description, LocalDate dob) {
         this.id = id;
         this.account = account;
         this.name = name;
@@ -34,7 +33,6 @@ public class Candidate implements Serializable {
         this.gender = gender;
         this.description = description;
         this.dob = dob;
-        this.active = active;
     }
 
     public int getId() {
@@ -108,12 +106,6 @@ public class Candidate implements Serializable {
     public void setDob(LocalDate dob) {
         this.dob = dob;
     }
-    public Active getActive() {
-        return active;
-    }
-    public void setActive(Active active) {
-        this.active = active;
-    }
 
     public void inputData() {
         this.account = new Account();
@@ -122,10 +114,9 @@ public class Candidate implements Serializable {
         this.phone = CandidateValidate.inputValidPhone(scanner);
         this.experience = Validator.validateInputInt(scanner, "Nhập vào năm kinh nghiệm: ");
         this.gender = CandidateValidate.inputValidGender(scanner);
-        System.out.print("Nhập vào mô tả bản thân: ");
-        this.description = scanner.nextLine();
+        this.description = CandidateValidate.inputValidDes(scanner);
         this.dob = CandidateValidate.inputValidDob(scanner);
         this.account.setUsername(this.email);
-        this.account.setPassword(CandidateValidate.inputValidPassword(scanner));
+        this.account.setPassword(CandidateValidate.inputValidPassword(scanner, "Nhập mật khẩu: "));
     }
 }

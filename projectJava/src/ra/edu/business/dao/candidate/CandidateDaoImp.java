@@ -4,7 +4,6 @@ import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.account.Account;
 import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.account.Role;
-import ra.edu.business.model.candidate.Active;
 import ra.edu.business.model.candidate.Candidate;
 import ra.edu.business.model.candidate.Gender;
 
@@ -13,11 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CandidateDaoImp implements CandidateDao {
-
-    @Override
-    public List<Candidate> readAll() {
-        return List.of();
-    }
 
     @Override
     public boolean loginCandidate(String username, String password) {
@@ -36,7 +30,12 @@ public class CandidateDaoImp implements CandidateDao {
                 isLoggedIn = true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi trong CSDL: " + e.getMessage());
+            if ("45000".equals(e.getSQLState())) {
+                System.err.println("Tài khoản đã bị khóa hoặc không tồn tại.");
+            } else {
+                System.err.println("Lỗi hệ thống: " + e.getMessage());
+            }
+            return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -46,9 +45,7 @@ public class CandidateDaoImp implements CandidateDao {
 
     @Override
     public boolean save(Candidate candidate) {
-        if (!checkEmailCandidate(candidate)) {
-            return false;
-        }
+
         Connection conn = null;
         CallableStatement callSt = null;
         try {
@@ -74,9 +71,6 @@ public class CandidateDaoImp implements CandidateDao {
 
     @Override
     public boolean update(Candidate candidate) {
-        if (!checkEmailCandidate(candidate)) {
-            return false;
-        }
 
         Connection conn = null;
         CallableStatement callSt = null;
@@ -93,7 +87,7 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật ứng viên: " + e.getMessage());
+            System.err.println("Lỗi cập nhật: " + e.getMessage());
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -148,12 +142,13 @@ public class CandidateDaoImp implements CandidateDao {
         List<Candidate> candidateList = new ArrayList<>();
         Connection conn = null;
         CallableStatement callSt = null;
+        ResultSet rs = null;
         try {
             conn = ConnectionDB.openConnection();
             callSt = conn.prepareCall("{CALL get_candidate(?, ?)}");
             callSt.setInt(1, page);
             callSt.setInt(2, limit);
-            ResultSet rs = callSt.executeQuery();
+            rs = callSt.executeQuery();
 
             while (rs.next()) {
                 Candidate candidate = new Candidate();
@@ -162,9 +157,19 @@ public class CandidateDaoImp implements CandidateDao {
                 candidate.setEmail(rs.getString("email"));
                 candidate.setPhone(rs.getString("phone"));
                 candidate.setExperience(rs.getInt("experience"));
-                // Set Active enum từ status string
-                String status = rs.getString("active");
-                candidate.setActive("ACTIVE".equalsIgnoreCase(status) ? Active.UNLOCKED : Active.LOCKED);
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDob(rs.getDate("dob").toLocalDate());
+
+                Account account = new Account();
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+                candidate.setAccount(account);
+
                 candidateList.add(candidate);
             }
 
@@ -194,17 +199,29 @@ public class CandidateDaoImp implements CandidateDao {
                 candidate.setEmail(rs.getString("email"));
                 candidate.setPhone(rs.getString("phone"));
                 candidate.setExperience(rs.getInt("experience"));
-                candidate.setGender(Gender.valueOf(rs.getString("gender")));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
                 candidate.setDescription(rs.getString("description"));
-                candidate.setDob(rs.getDate("dob").toLocalDate());
-                candidate.setActive(Active.valueOf(rs.getString("action")));
+                Date dob = rs.getDate("dob");
+                if (dob != null) {
+                    candidate.setDob(dob.toLocalDate());
+                }
 
                 Account account = new Account();
                 account.setId(rs.getInt("account_id"));
                 account.setUsername(rs.getString("username"));
                 account.setPassword(rs.getString("password"));
-                account.setRole(Role.valueOf(rs.getString("role")));
-                account.setStatus(AccountStatus.valueOf(rs.getString("status")));
+                String roleStr = rs.getString("role");
+                if (roleStr != null) {
+                    account.setRole(Role.valueOf(roleStr));
+                }
+
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
 
                 candidate.setAccount(account);
             }
@@ -216,20 +233,20 @@ public class CandidateDaoImp implements CandidateDao {
         return candidate;
     }
 
-
     @Override
-    public boolean checkEmailCandidate(Candidate candidate) {
+    public boolean checkEmailCandidate(String email) {
         Connection conn = null;
         CallableStatement callSt = null;
         try {
             conn = ConnectionDB.openConnection();
             callSt = conn.prepareCall("{CALL check_email_candidate(?)}");
-            callSt.setString(1, candidate.getEmail());
+            callSt.setString(1, email);
             callSt.execute();
-            return true;
+            return false;
         } catch (SQLException e) {
             if ("45000".equals(e.getSQLState())) {
-                System.err.println(e.getMessage());
+                System.out.println("Email đã tồn tại trong hệ thống.");
+                return true;
             } else {
                 System.err.println("Lỗi kiểm tra email: " + e.getMessage());
             }
@@ -238,6 +255,7 @@ public class CandidateDaoImp implements CandidateDao {
             ConnectionDB.closeConnection(conn, callSt);
         }
     }
+
 
     @Override
     public boolean lockCandidateAccount(int candidateId) {
@@ -312,7 +330,12 @@ public class CandidateDaoImp implements CandidateDao {
                 candidate.setEmail(rs.getString("email"));
                 candidate.setPhone(rs.getString("phone"));
                 candidate.setExperience(rs.getInt("experience"));
-                candidate.setActive(rs.getString("status").equals("ACTIVE") ? Active.UNLOCKED : Active.LOCKED);
+                Account account = new Account();
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+                candidate.setAccount(account);
                 candidateList.add(candidate);
             }
         } catch (SQLException e) {
@@ -321,6 +344,214 @@ public class CandidateDaoImp implements CandidateDao {
             ConnectionDB.closeConnection(conn, callSt);
         }
         return candidateList;
+    }
+
+    @Override
+    public List<Candidate> filterByExperience(int minExperience) {
+        List<Candidate> list = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL filter_by_experience(?)}");
+            callSt.setInt(1, minExperience);
+            rs = callSt.executeQuery();
+
+            while (rs.next()) {
+                Candidate candidate = new Candidate();
+                candidate.setId(rs.getInt("id"));
+                candidate.setName(rs.getString("name"));
+                candidate.setEmail(rs.getString("email"));
+                candidate.setPhone(rs.getString("phone"));
+                candidate.setExperience(rs.getInt("experience"));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDob(rs.getDate("dob").toLocalDate());
+                Account account = new Account();
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+                candidate.setAccount(account);
+
+                list.add(candidate);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi lọc theo kinh nghiệm: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Candidate> filterByAgeRange(int minAge, int maxAge) {
+        List<Candidate> list = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL filter_by_age_range(?, ?)}");
+            callSt.setInt(1, minAge);
+            callSt.setInt(2, maxAge);
+            rs = callSt.executeQuery();
+
+            while (rs.next()) {
+                Candidate candidate = new Candidate();
+                candidate.setId(rs.getInt("id"));
+                candidate.setName(rs.getString("name"));
+                candidate.setEmail(rs.getString("email"));
+                candidate.setPhone(rs.getString("phone"));
+                candidate.setExperience(rs.getInt("experience"));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDob(rs.getDate("dob").toLocalDate());
+                Account account = new Account();
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+                candidate.setAccount(account);
+
+                list.add(candidate);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi lọc theo độ tuổi: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Candidate> filterByGender(String gender) {
+        List<Candidate> list = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL filter_by_gender(?)}");
+            callSt.setString(1, gender); // "MALE", "FEMALE", "OTHER"
+            rs = callSt.executeQuery();
+
+            while (rs.next()) {
+                Candidate candidate = new Candidate();
+                candidate.setId(rs.getInt("id"));
+                candidate.setName(rs.getString("name"));
+                candidate.setEmail(rs.getString("email"));
+                candidate.setPhone(rs.getString("phone"));
+                candidate.setExperience(rs.getInt("experience"));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDob(rs.getDate("dob").toLocalDate());
+                Account account = new Account();
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+                candidate.setAccount(account);
+
+                list.add(candidate);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi lọc theo giới tính: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return list;
+    }
+
+    @Override
+    public boolean changePasswordCandidate(int accountId, String newPassword) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL change_password_by_id(?, ?)}");
+            callSt.setInt(1, accountId);
+            callSt.setString(2, newPassword);
+
+            callSt.execute();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Lỗi: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return false;
+    }
+
+
+    @Override
+    public Candidate getCandidateByEmail(String email) {
+        Candidate candidate = null;
+        Connection conn = null;
+        CallableStatement callSt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL get_candidate_by_email(?)}");
+            callSt.setString(1, email);
+            rs = callSt.executeQuery();
+
+            if (rs.next()) {
+                candidate = new Candidate();
+                candidate.setId(rs.getInt("id"));
+                candidate.setName(rs.getString("name"));
+                candidate.setEmail(rs.getString("email"));
+                candidate.setPhone(rs.getString("phone"));
+                candidate.setExperience(rs.getInt("experience"));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDescription(rs.getString("description"));
+                Date dob = rs.getDate("dob");
+                if (dob != null) {
+                    candidate.setDob(dob.toLocalDate());
+                }
+
+                Account account = new Account();
+                account.setId(rs.getInt("account_id"));
+                account.setUsername(rs.getString("username"));
+                account.setPassword(rs.getString("password"));
+                String roleStr = rs.getString("role");
+                if (roleStr != null) {
+                    account.setRole(Role.valueOf(roleStr));
+                }
+
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+
+                candidate.setAccount(account);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi lấy ứng viên theo email: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+
+        return candidate;
     }
 
 }

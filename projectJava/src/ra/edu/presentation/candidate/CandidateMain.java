@@ -1,6 +1,8 @@
 package ra.edu.presentation.candidate;
 
 import ra.edu.MainApplication;
+import ra.edu.presentation.candidate.profile.ProfileUI;
+import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.FileUtil.writeToFile;
@@ -15,11 +17,11 @@ public class CandidateMain {
             System.out.println("2. Xem và nộp đơn ứng tuyển");
             System.out.println("3. Xem đơn đã ứng tuyển");
             System.out.println("4. Đăng xuất");
-            System.out.print("Chọn: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
             switch (choice) {
                 case 1:
+                    ProfileUI.displayMenuProfile();
                     break;
                 case 2:
                     break;

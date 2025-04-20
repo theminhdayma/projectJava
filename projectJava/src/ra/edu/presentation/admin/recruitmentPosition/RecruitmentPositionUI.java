@@ -1,9 +1,14 @@
 package ra.edu.presentation.admin.recruitmentPosition;
 
+import ra.edu.business.service.recruitmentPosition.RecruitmentPositionService;
+import ra.edu.business.service.recruitmentPosition.RecruitmentPositionServiceImp;
+import ra.edu.validate.Validator;
+
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.ThreadUtil.pause;
 
 public class RecruitmentPositionUI {
+    private static final RecruitmentPositionService recruitmentPositionService = new RecruitmentPositionServiceImp();
     public static void displayMenuRecruitmentPosition() {
         int choice;
         do {
@@ -12,12 +17,12 @@ public class RecruitmentPositionUI {
             System.out.println("2. Cập nhật vị trí tuyển dụng");
             System.out.println("3. Xóa vị trí tuyển dụng");
             System.out.println("4. Xem danh sách vị trí đang hoạt động");
-            System.out.println("5. Quay lại meu chính");
-            System.out.print("Chọn: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            System.out.println("5. Quay lại menu chính");
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
             switch (choice) {
                 case 1:
+
                     break;
                 case 2:
                     break;

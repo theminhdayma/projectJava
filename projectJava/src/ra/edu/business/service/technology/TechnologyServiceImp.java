@@ -13,11 +13,6 @@ public class TechnologyServiceImp implements TechnologyService {
     }
 
     @Override
-    public List<Technology> readAll() {
-        return technologyDao.readAll();
-    }
-
-    @Override
     public boolean save(Technology technology) {
         return technologyDao.save(technology);
     }

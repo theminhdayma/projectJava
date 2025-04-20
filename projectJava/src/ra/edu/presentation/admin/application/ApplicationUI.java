@@ -1,5 +1,7 @@
 package ra.edu.presentation.admin.application;
 
+import ra.edu.validate.Validator;
+
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.ThreadUtil.pause;
 
@@ -15,8 +17,7 @@ public class ApplicationUI {
             System.out.println("5. Gửi thông tin phỏng vấn");
             System.out.println("6. Cập nhật kết quả phỏng vấn");
             System.out.println("7. Quay về menu chính");
-            System.out.print("Mời bạn chọn chức năng: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
             switch (choice) {
                 case 1:
                     break;

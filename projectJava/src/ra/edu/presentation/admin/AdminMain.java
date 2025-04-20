@@ -5,6 +5,7 @@ import ra.edu.presentation.admin.application.ApplicationUI;
 import ra.edu.presentation.admin.candidate.CandidateUI;
 import ra.edu.presentation.admin.recruitmentPosition.RecruitmentPositionUI;
 import ra.edu.presentation.admin.technology.TechnologyUI;
+import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.FileUtil.writeToFile;
@@ -20,14 +21,13 @@ public class AdminMain {
             System.out.println("3. Quản lý vị trí tuyển dụng");
             System.out.println("4. Quản lý đơn tuyển dụng");
             System.out.println("5. Đăng xuất");
-            System.out.print("Mời bạn chọn chức năng: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
             switch (choice) {
                 case 1:
                     TechnologyUI.displayMenuTechnology();
                     break;
                 case 2:
-                    CandidateUI.displayMenuCadidate();
+                    CandidateUI.displayMenuCandidate();
                     break;
                 case 3:
                     RecruitmentPositionUI.displayMenuRecruitmentPosition();

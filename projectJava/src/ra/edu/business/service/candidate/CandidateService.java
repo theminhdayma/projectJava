@@ -10,9 +10,14 @@ public interface CandidateService extends AppService<Candidate> {
     int getTotalPage(int limit);
     List<Candidate> getCandidateByPage(int page, int limit);
     Candidate getCandidateById(int id);
-    boolean checkEmailCandidate(Candidate candidate);
+    boolean checkEmailCandidate(String email);
     boolean lockCandidateAccount(int candidateId);
     boolean unlockCandidateAccount(int candidateId);
     boolean resetCandidatePassword(int candidateId, String newPassword);
     List<Candidate> searchCandidateByName(String keyword);
+    List<Candidate> filterByExperience(int minExperience);
+    List<Candidate> filterByAgeRange(int minAge, int maxAge);
+    List<Candidate> filterByGender(String gender);
+    boolean changePasswordCandidate(int accountId, String newPassword);
+    Candidate getCandidateByEmail(String email);
 }

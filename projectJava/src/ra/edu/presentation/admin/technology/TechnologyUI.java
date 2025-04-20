@@ -2,13 +2,14 @@ package ra.edu.presentation.admin.technology;
 
 import ra.edu.business.model.technology.Technology;
 import ra.edu.business.service.technology.TechnologyServiceImp;
+import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.ThreadUtil.pause;
+import static ra.edu.utils.Util.LIMIT;
 
 public class TechnologyUI {
     private static final TechnologyServiceImp technologyService = new TechnologyServiceImp();
-    private static final int LIMIT = 5;
     public static void displayMenuTechnology() {
         int choice;
         do {
@@ -19,7 +20,7 @@ public class TechnologyUI {
             System.out.println("4. Xóa công nghệ");
             System.out.println("5. Quay về menu chính");
             System.out.print("Chọn: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
             switch (choice) {
                 case 1:
@@ -69,9 +70,8 @@ public class TechnologyUI {
 
             int pageChoice;
             do {
-                System.out.print("Chọn trang muốn xem: ");
                 try {
-                    pageChoice = Integer.parseInt(scanner.nextLine());
+                    pageChoice = Validator.validateInputInt(scanner, "Chọn trang muốn xem: ");
                 } catch (NumberFormatException e) {
                     pageChoice = -1;
                 }
@@ -94,8 +94,7 @@ public class TechnologyUI {
     }
 
     private static void addTechnology() {
-        System.out.print("Nhập số lượng công nghệ muốn thêm: ");
-        int quantity = Integer.parseInt(scanner.nextLine());
+        int quantity = Validator.validateInputInt(scanner, "Nhập số lượng công nghệ muốn thêm: ");
 
         for (int i = 1; i <= quantity; i++) {
             System.out.println("\n== Nhập công nghệ thứ " + i + " ==");
@@ -116,8 +115,7 @@ public class TechnologyUI {
         int attempts = 0;
 
         while (attempts < 3) {
-            System.out.print("Nhập ID công nghệ muốn sửa: ");
-            id = Integer.parseInt(scanner.nextLine());
+            id = Validator.validateInputInt(scanner, "Nhập ID công nghệ muốn sửa: ");
 
             isTechnology = findTechnologyById(id);
 
@@ -147,8 +145,7 @@ public class TechnologyUI {
         int attempts = 0;
 
         while (attempts < 3) {
-            System.out.print("Nhập ID công nghệ muốn xóa: ");
-            id = Integer.parseInt(scanner.nextLine());
+            id = Validator.validateInputInt(scanner, "Nhập ID công nghệ muốn xóa: ");
 
             isTechnology = findTechnologyById(id);
 

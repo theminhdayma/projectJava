@@ -8,6 +8,9 @@ import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
 import ra.edu.presentation.admin.AdminMain;
 import ra.edu.presentation.candidate.CandidateMain;
+import ra.edu.validate.StringRule;
+import ra.edu.validate.Validator;
+import ra.edu.validate.candidate.CandidateValidate;
 
 import java.util.Scanner;
 
@@ -19,6 +22,11 @@ public class MainApplication {
     public static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        checkLoginAndDisplayMenu();
+        displayMenuApplication();
+    }
+
+    public static void checkLoginAndDisplayMenu() {
         String token = readFromFile();
         if (token != null && !token.isEmpty()) {
             String[] parts = token.split(":");
@@ -39,8 +47,6 @@ public class MainApplication {
                 System.out.println("Định dạng token không hợp lệ.");
             }
         }
-
-        displayMenuApplication();
     }
 
     public static void displayMenuApplication() {
@@ -51,8 +57,7 @@ public class MainApplication {
             System.out.println("2. Đăng nhập với ứng viên");
             System.out.println("3. Đăng ký với ứng viên");
             System.out.println("4. Thoát");
-            System.out.print("Mời bạn chọn: ");
-            choice = Integer.parseInt(scanner.nextLine());
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
             switch (choice) {
                 case 1:
@@ -82,16 +87,18 @@ public class MainApplication {
 
         do {
             System.out.println("==== Đăng nhập quản trị viên ====");
-            Account inputAdmin = new Account();
-            inputAdmin.inputData();
+            String username = Validator.validateInputString(scanner, "Nhập tên đăng nhập: ", new StringRule(0, 255));
+            String password = Validator.validateInputString(scanner, "Nhập mật khẩu: ", new StringRule(0, 255));
 
-            boolean isLogin = adminService.loginAdmin(inputAdmin.getUsername(), inputAdmin.getPassword());
+            boolean isLogin = adminService.loginAdmin(username, password);
             if (isLogin) {
-                String token = "ADMIN: " + inputAdmin.getUsername();
+                String token = "ADMIN:" + username;
                 writeToFile(token);
                 System.out.println("Đăng nhập thành công với vai trò quản trị viên.");
                 pause(1);
-                admin = inputAdmin;
+                admin = new Account();
+                admin.setUsername(username);
+                admin.setPassword(password);
                 AdminMain.displayMenuManagentAdmin();
             } else {
                 System.out.println("Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.\n");
@@ -99,25 +106,54 @@ public class MainApplication {
         } while (admin == null);
     }
 
+
     public static void loginCandidate() {
         Account candidate = null;
         CandidateService candidateService = new CandidateServiceImp();
 
         do {
             System.out.println("==== Đăng nhập ứng viên ====");
-            Account inputCandidate = new Account();
-            inputCandidate.inputData();
+            String username = CandidateValidate.inputValidEmail(scanner);
+            String password = Validator.validateInputString(scanner, "Nhập mật khẩu: ", new StringRule(0, 255));
 
-            boolean isLogin = candidateService.loginCandidate(inputCandidate.getUsername(), inputCandidate.getPassword());
+            boolean isLogin = candidateService.loginCandidate(username, password);
             if (isLogin) {
-                String token = "CANDIDATE: " + inputCandidate.getUsername();
+                String token = "CANDIDATE:" + username;
                 writeToFile(token);
                 System.out.println("Đăng nhập thành công với vai trò ứng viên.");
                 pause(1);
-                candidate = inputCandidate;
+                candidate = new Account();
+                candidate.setUsername(username);
+                candidate.setPassword(password);
                 CandidateMain.displayMenuCadidateManagent();
             } else {
-                System.out.println("Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng thử lại.\n");
+                System.err.println("Tên đăng nhập hoặc mật khẩu không đúng.");
+                int choice;
+                do {
+                    System.out.println("1. Có - Đăng ký tài khoản");
+                    System.out.println("2. Không - Thử lại đăng nhập");
+                    System.out.println("3. Thoát");
+                    try {
+                        choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
+                        switch (choice) {
+                            case 1:
+                                registerCandidate();
+                                return;
+                            case 2:
+                                System.out.println("Vui lòng nhập lại thông tin đăng nhập.\n");
+                                break;
+                            case 3:
+                                System.out.println("Thoát đăng nhập !");
+                                return;
+                            default:
+                                System.err.println("Không hợp lệ. Vui lòng chọn lại.");
+                                choice = -1;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.err.println("Lựa chọn không hợp lệ. Vui lòng nhập số.");
+                        choice = -1;
+                    }
+                } while (choice != 2);
             }
         } while (candidate == null);
     }

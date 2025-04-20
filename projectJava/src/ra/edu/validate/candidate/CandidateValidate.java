@@ -1,13 +1,25 @@
 package ra.edu.validate.candidate;
 
 import ra.edu.business.model.candidate.Gender;
+import ra.edu.business.service.candidate.CandidateService;
+import ra.edu.business.service.candidate.CandidateServiceImp;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+
 public class CandidateValidate {
+    private static CandidateService candidateService;
+
+    public static CandidateService getCandidateService() {
+        if (candidateService == null) {
+            candidateService = new CandidateServiceImp();
+        }
+        return candidateService;
+    }
 
     public static String inputValidName(Scanner scanner) {
         String name;
@@ -23,10 +35,10 @@ public class CandidateValidate {
         return name;
     }
 
-    public static String inputValidPassword(Scanner scanner) {
+    public static String inputValidPassword(Scanner scanner, String massage) {
         String password;
         do {
-            System.out.print("Nhập mật khẩu: ");
+            System.out.print(massage);
             password = scanner.nextLine();
             if (password == null || password.trim().isEmpty()) {
                 System.err.println("Mật khẩu không được để trống.");
@@ -37,14 +49,31 @@ public class CandidateValidate {
         return password;
     }
 
+    public static String inputValidDes(Scanner scanner) {
+        String description;
+        do {
+            System.out.print("Nhập mô tả bản thân: ");
+            description = scanner.nextLine();
+            if (description == null || description.trim().isEmpty()) {
+                System.err.println("Mô tả bản thân không được để trống.");
+            } else {
+                break;
+            }
+        } while (true);
+        return description;
+    }
+
     public static String inputValidEmail(Scanner scanner) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         String email;
         do {
             System.out.print("Nhập email: ");
-            email = scanner.nextLine();
-            if (email == null || email.trim().isEmpty() || !Pattern.matches(emailRegex, email)) {
-                System.err.println("Email không hợp lệ.");
+            email = scanner.nextLine().trim();
+
+            if (email.isEmpty()) {
+                System.err.println("Email không được để trống.");
+            } else if (!Pattern.matches(emailRegex, email)) {
+                System.err.println("Email không đúng định dạng.");
             } else {
                 break;
             }
@@ -58,9 +87,11 @@ public class CandidateValidate {
         do {
             System.out.print("Nhập số điện thoại: ");
             phone = scanner.nextLine();
-            if (phone == null || phone.trim().isEmpty() || !Pattern.matches(phoneRegex, phone)) {
+            if (phone == null || phone.trim().isEmpty()) {
                 System.err.println("Số điện thoại không hợp lệ.");
-            } else {
+            } else if (!Pattern.matches(phoneRegex, phone)) {
+                System.err.println("Số điện thoại không hợp lệ. Vui lòng nhập lại.");
+            }else {
                 break;
             }
         } while (true);
@@ -69,30 +100,24 @@ public class CandidateValidate {
 
     public static LocalDate inputValidDob(Scanner scanner) {
         LocalDate dob = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         while (dob == null) {
+            System.out.print("Nhập ngày sinh (định dạng yyyy-MM-dd): ");
+            String input = scanner.nextLine();
+
             try {
-                System.out.print("Nhập ngày sinh (1 - 31): ");
-                int day = Integer.parseInt(scanner.nextLine());
-
-                System.out.print("Nhập tháng sinh (1 - 12): ");
-                int month = Integer.parseInt(scanner.nextLine());
-
-                System.out.print("Nhập năm sinh (yyyy): ");
-                int year = Integer.parseInt(scanner.nextLine());
-
-                dob = LocalDate.of(year, month, day);
+                dob = LocalDate.parse(input, formatter);
 
                 if (dob.isAfter(LocalDate.now())) {
-                    System.err.println("Ngày sinh không được sau ngày hiện tại. Vui lòng nhập lại.\n");
+                    System.err.println("Ngày sinh không được lớn hơn ngày hiện tại.\n");
                     dob = null;
                 }
-
-            } catch (NumberFormatException e) {
-                System.err.println("Vui lòng nhập đúng định dạng số.\n");
-            } catch (DateTimeException e) {
-                System.err.println("Ngày sinh không hợp lệ (ví dụ như 31/02). Vui lòng nhập lại.\n");
+            } catch (DateTimeParseException e) {
+                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.\n");
             }
         }
+
         return dob;
     }
 

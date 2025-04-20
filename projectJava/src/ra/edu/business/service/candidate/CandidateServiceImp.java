@@ -11,10 +11,6 @@ public class CandidateServiceImp implements CandidateService {
     public CandidateServiceImp() {
         candidateDao = new CandidateDaoImp();
     }
-    @Override
-    public List<Candidate> readAll() {
-        return List.of();
-    }
 
     @Override
     public boolean save(Candidate candidate) {
@@ -52,8 +48,8 @@ public class CandidateServiceImp implements CandidateService {
     }
 
     @Override
-    public boolean checkEmailCandidate(Candidate candidate) {
-        return candidateDao.checkEmailCandidate(candidate);
+    public boolean checkEmailCandidate(String email) {
+        return candidateDao.checkEmailCandidate(email);
     }
 
     @Override
@@ -74,5 +70,30 @@ public class CandidateServiceImp implements CandidateService {
     @Override
     public List<Candidate> searchCandidateByName(String keyword) {
         return candidateDao.searchCandidateByName(keyword);
+    }
+
+    @Override
+    public List<Candidate> filterByExperience(int minExperience) {
+        return candidateDao.filterByExperience(minExperience);
+    }
+
+    @Override
+    public List<Candidate> filterByAgeRange(int minAge, int maxAge) {
+        return candidateDao.filterByAgeRange(minAge, maxAge);
+    }
+
+    @Override
+    public List<Candidate> filterByGender(String gender) {
+        return candidateDao.filterByGender(gender);
+    }
+
+    @Override
+    public boolean changePasswordCandidate(int accountId, String newPassword) {
+        return candidateDao.changePasswordCandidate(accountId, newPassword);
+    }
+
+    @Override
+    public Candidate getCandidateByEmail(String email) {
+        return candidateDao.getCandidateByEmail(email);
     }
 }

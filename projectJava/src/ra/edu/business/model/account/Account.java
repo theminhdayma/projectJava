@@ -63,9 +63,4 @@ public class Account implements Serializable {
     public void setStatus(AccountStatus status) {
         this.status = status;
     }
-
-    public void inputData() {
-        this.username = Validator.validateInputString(scanner, "Nhập tên đăng nhập:", new StringRule(0, 255));
-        this.password = Validator.validateInputString(scanner, "Nhập mật khẩu:", new StringRule(0, 255));
-    }
 }

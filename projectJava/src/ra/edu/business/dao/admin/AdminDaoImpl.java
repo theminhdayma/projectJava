@@ -2,6 +2,7 @@ package ra.edu.business.dao.admin;
 
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.account.Account;
+import ra.edu.business.model.candidate.Candidate;
 
 import java.sql.*;
 import java.util.List;
@@ -46,11 +47,6 @@ public class AdminDaoImpl implements AdminDao {
         }
 
         return isLoggedIn;
-    }
-
-    @Override
-    public List<Account> readAll() {
-        return null;
     }
 
     @Override
