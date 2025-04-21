@@ -2,16 +2,25 @@ package ra.edu;
 
 import ra.edu.business.model.account.Account;
 import ra.edu.business.model.candidate.Candidate;
+import ra.edu.business.model.candidateTenology.CandidateTechnology;
+import ra.edu.business.model.technology.Technology;
+import ra.edu.business.service.Account.AccountService;
+import ra.edu.business.service.Account.AccountServiceImp;
 import ra.edu.business.service.admin.AdminService;
 import ra.edu.business.service.admin.AdminServiceImp;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
+import ra.edu.business.service.candidateTechnology.CandidateTechnologyService;
+import ra.edu.business.service.candidateTechnology.CandidateTechnologyServiceImp;
+import ra.edu.business.service.technology.TechnologyService;
+import ra.edu.business.service.technology.TechnologyServiceImp;
 import ra.edu.presentation.admin.AdminMain;
 import ra.edu.presentation.candidate.CandidateMain;
 import ra.edu.validate.StringRule;
 import ra.edu.validate.Validator;
 import ra.edu.validate.candidate.CandidateValidate;
 
+import java.util.List;
 import java.util.Scanner;
 
 import static ra.edu.utils.FileUtil.readFromFile;
@@ -20,7 +29,9 @@ import static ra.edu.utils.ThreadUtil.pause;
 
 public class MainApplication {
     public static final Scanner scanner = new Scanner(System.in);
-
+    private static final TechnologyService technologyService = new TechnologyServiceImp();
+    private static final CandidateTechnologyService candidateTechnologyService = new CandidateTechnologyServiceImp();
+    private static final AccountService accountService = new AccountServiceImp();
     public static void main(String[] args) {
         checkLoginAndDisplayMenu();
         displayMenuApplication();
@@ -33,13 +44,15 @@ public class MainApplication {
             if (parts.length == 2) {
                 String role = parts[0];
                 String username = parts[1];
+                int count = accountService.checkIsAccount(username);
+                if (count == 0) {
+                    displayMenuApplication();
+                }
                 System.out.println("\nDuy trì đăng nhập với tài khoản: " + username);
                 if ("ADMIN".equalsIgnoreCase(role)) {
                     AdminMain.displayMenuManagentAdmin();
-                    return;
                 } else if ("CANDIDATE".equalsIgnoreCase(role)) {
                     CandidateMain.displayMenuCadidateManagent();
-                    return;
                 } else {
                     System.out.println("Vai trò không hợp lệ trong token.");
                 }
@@ -106,7 +119,6 @@ public class MainApplication {
         } while (admin == null);
     }
 
-
     public static void loginCandidate() {
         Account candidate = null;
         CandidateService candidateService = new CandidateServiceImp();
@@ -158,6 +170,50 @@ public class MainApplication {
         } while (candidate == null);
     }
 
+    public static List<Technology> getAllTechnology() {
+        return technologyService.getAllTechnology();
+    }
+
+    public static void choiceTechnologyName(int candidateId) {
+        List<Technology> technologyList = getAllTechnology();
+        int choice;
+
+        do {
+            System.out.println("\n=============================");
+            System.out.println("DANH SÁCH CÔNG NGHỆ HIỆN CÓ");
+            System.out.println("=============================");
+            for (int i = 0; i < technologyList.size(); i++) {
+                System.out.printf("%2d. %s\n", (i + 1), technologyList.get(i).getName());
+            }
+            System.out.println(" 0. Thoát");
+            System.out.println("=============================");
+
+            choice = Validator.validateInputInt(scanner, "Nhập số tương ứng với công nghệ muốn đăng ký: ");
+
+            if (choice < 0 || choice > technologyList.size()) {
+                System.out.printf("Lựa chọn không hợp lệ. Vui lòng chọn từ 0 đến %d.\n", technologyList.size());
+                continue;
+            }
+
+            switch (choice) {
+                case 0:
+                    System.out.println("Đăng kí công nghệ thành công.");
+                    System.out.println("Loading...");
+                    pause(1);
+                    break;
+                default:
+                    Technology selectedTech = technologyList.get(choice - 1);
+                    CandidateTechnology candidateTech = new CandidateTechnology();
+                    candidateTech.setCandidateId(candidateId);
+                    candidateTech.setTechnologyId(selectedTech.getId());
+
+                    candidateTechnologyService.addCandidateTechnology(candidateTech);
+                    break;
+            }
+
+        } while (choice != 0);
+    }
+
     public static void registerCandidate() {
         Candidate candidate = null;
         CandidateService candidateService = new CandidateServiceImp();
@@ -166,6 +222,7 @@ public class MainApplication {
             System.out.println("==== Đăng ký ứng viên ====");
             Candidate inputCandidate = new Candidate();
             inputCandidate.inputData();
+            choiceTechnologyName(inputCandidate.getId());
 
             boolean isRegister = candidateService.save(inputCandidate);
             if (isRegister) {

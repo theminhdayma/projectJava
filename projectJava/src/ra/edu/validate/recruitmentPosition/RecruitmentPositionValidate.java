@@ -81,22 +81,28 @@ public class RecruitmentPositionValidate {
 
     public static LocalDate inputValidExpiredDate(Scanner scanner, LocalDate createdDate) {
         LocalDate expiredDate;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         do {
-            System.out.print("Nhập ngày hết hạn (yyyy-MM-dd): ");
-            String input = scanner.nextLine();
+            System.out.print("Nhập ngày hết hạn (dd-MM-yyyy): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.err.println("Không được để trống ngày hết hạn.");
+                continue;
+            }
 
             try {
                 expiredDate = LocalDate.parse(input, formatter);
                 if (expiredDate.isAfter(createdDate)) {
                     return expiredDate;
                 } else {
-                    System.err.println("Ngày hết hạn phải sau ngày tạo (" + createdDate + ").");
+                    System.err.println("Ngày hết hạn phải sau ngày tạo (" + createdDate.format(formatter) + ").");
                 }
             } catch (DateTimeParseException e) {
-                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.");
+                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy.");
             }
         } while (true);
     }
+
 }

@@ -10,4 +10,5 @@ public interface TechnologyService extends AppService<Technology> {
     List<Technology> getTechnologyByPage(int page, int limit);
     Technology getTechnologyById(int id);
     boolean checkNameTechnology(Technology technology);
+    List<Technology> getAllTechnology();
 }

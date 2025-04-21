@@ -1,12 +1,11 @@
 package ra.edu.presentation.candidate;
 
-import ra.edu.MainApplication;
 import ra.edu.presentation.candidate.profile.ProfileUI;
 import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
-import static ra.edu.utils.FileUtil.writeToFile;
 import static ra.edu.utils.ThreadUtil.pause;
+import static ra.edu.utils.Util.logout;
 
 public class CandidateMain {
     public static void displayMenuCadidateManagent() {
@@ -30,7 +29,7 @@ public class CandidateMain {
                 case 4:
                     System.out.println("\nLoading...");
                     pause(1);
-                    logoutCandidate();
+                    logout();
                     break;
                 default:
                     System.out.println("Không hợp lệ, vui lòng chọn từ 1 đến 4.");
@@ -38,12 +37,4 @@ public class CandidateMain {
         } while (choice != 4);
     }
 
-    public static void logoutCandidate() {
-        writeToFile("");
-
-        System.out.println("Bạn đã đăng xuất thành công.");
-        pause(1);
-
-        MainApplication.displayMenuApplication();
-    }
 }

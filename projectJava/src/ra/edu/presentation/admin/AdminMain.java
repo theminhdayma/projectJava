@@ -1,6 +1,5 @@
 package ra.edu.presentation.admin;
 
-import ra.edu.MainApplication;
 import ra.edu.presentation.admin.application.ApplicationUI;
 import ra.edu.presentation.admin.candidate.CandidateUI;
 import ra.edu.presentation.admin.recruitmentPosition.RecruitmentPositionUI;
@@ -8,8 +7,8 @@ import ra.edu.presentation.admin.technology.TechnologyUI;
 import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
-import static ra.edu.utils.FileUtil.writeToFile;
 import static ra.edu.utils.ThreadUtil.pause;
+import static ra.edu.utils.Util.logout;
 
 public class AdminMain {
     public static void displayMenuManagentAdmin() {
@@ -38,20 +37,11 @@ public class AdminMain {
                 case 5:
                     System.out.println("\nLoading...");
                     pause(1);
-                    logoutAdmin();
+                    logout();
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ, vui lòng thử lại.");
             }
         } while (choice != 5);
-    }
-
-    public static void logoutAdmin() {
-        writeToFile("");
-
-        System.out.println("Bạn đã đăng xuất thành công.");
-        pause(1);
-
-        MainApplication.displayMenuApplication();
     }
 }

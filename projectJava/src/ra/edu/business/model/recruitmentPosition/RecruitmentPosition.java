@@ -15,10 +15,11 @@ public class RecruitmentPosition {
     private int minExperience;
     private LocalDate createdDate;
     private LocalDate expiredDate;
+    private RecruitmentPositionStatus status;
 
     public RecruitmentPosition() {};
 
-    public RecruitmentPosition(int id, String name, String description, double minSalary, double maxSalary, int minExperience, LocalDate createdDate, LocalDate expiredDate) {
+    public RecruitmentPosition(int id, String name, String description, double minSalary, double maxSalary, int minExperience, LocalDate createdDate, LocalDate expiredDate, RecruitmentPositionStatus status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -27,6 +28,7 @@ public class RecruitmentPosition {
         this.minExperience = minExperience;
         this.createdDate = createdDate;
         this.expiredDate = expiredDate;
+        this.status = status;
     }
 
     public int getId() {
@@ -78,6 +80,12 @@ public class RecruitmentPosition {
     }
     public void setExpiredDate(LocalDate expiredDate) {
         this.expiredDate = expiredDate;
+    }
+    public RecruitmentPositionStatus getStatus() {
+        return status;
+    }
+    public void setStatus(RecruitmentPositionStatus status) {
+        this.status = status;
     }
 
     public void inputData() {

@@ -3,6 +3,7 @@ package ra.edu.validate.candidate;
 import ra.edu.business.model.candidate.Gender;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
+import ra.edu.validate.Validator;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -100,11 +101,16 @@ public class CandidateValidate {
 
     public static LocalDate inputValidDob(Scanner scanner) {
         LocalDate dob = null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         while (dob == null) {
-            System.out.print("Nhập ngày sinh (định dạng yyyy-MM-dd): ");
-            String input = scanner.nextLine();
+            System.out.print("Nhập ngày sinh (định dạng dd-MM-yyyy): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.isEmpty()) {
+                System.err.println("Không được để trống ngày sinh.\n");
+                continue;
+            }
 
             try {
                 dob = LocalDate.parse(input, formatter);
@@ -114,12 +120,13 @@ public class CandidateValidate {
                     dob = null;
                 }
             } catch (DateTimeParseException e) {
-                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.\n");
+                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy.\n");
             }
         }
 
         return dob;
     }
+
 
     public static Gender inputValidGender(Scanner scanner) {
         while (true) {
@@ -129,18 +136,34 @@ public class CandidateValidate {
             System.out.println("3. Khác");
             System.out.print("Lựa chọn của bạn: ");
 
-            String choice = scanner.nextLine().trim();
+            int choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
             switch (choice) {
-                case "1":
+                case 1:
                     return Gender.MALE;
-                case "2":
+                case 2:
                     return Gender.FEMALE;
-                case "3":
+                case 3:
                     return Gender.OTHER;
                 default:
                     System.err.println("Lựa chọn không hợp lệ, vui lòng chọn lại (1-3).");
             }
         }
+    }
+
+    public static int inputValidExperience (Scanner scanner) {
+        int experience;
+        do {
+            try {
+                experience = Validator.validateInputInt(scanner, "Nhập số năm kinh nghiệm: ");
+                if (experience < 0) {
+                    System.err.println("Số năm kinh nghiệm không được âm.");
+                } else {
+                    return experience;
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Vui lòng nhập đúng định dạng số.");
+            }
+        } while (true);
     }
 
 }

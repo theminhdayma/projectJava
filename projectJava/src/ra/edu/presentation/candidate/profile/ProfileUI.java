@@ -3,12 +3,8 @@ package ra.edu.presentation.candidate.profile;
 import ra.edu.business.model.candidate.Candidate;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
-import ra.edu.presentation.admin.AdminMain;
-import ra.edu.presentation.candidate.CandidateMain;
 import ra.edu.validate.Validator;
 import ra.edu.validate.candidate.CandidateValidate;
-
-import java.time.LocalDate;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.FileUtil.readFromFile;
@@ -23,7 +19,8 @@ public class ProfileUI {
             System.out.println("1. Thay đổi thông tin cá nhân");
             System.out.println("2. Đổi mật khẩu");
             System.out.println("3. Hiểm thị thông tin cá nhân");
-            System.out.println("4. Quay về menu chính");
+            System.out.println("4. Xem các thông báo tuyển dụng đã ứng tuyển");
+            System.out.println("5. Quay về menu chính");
             choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
             switch (choice) {
@@ -37,13 +34,16 @@ public class ProfileUI {
                     showProfile();
                     break;
                 case 4:
+
+                    break;
+                case 5:
                     System.out.println("\nLoading...");
                     pause(1);
                     break;
                 default:
                     System.out.println("Không hợp lệ, vui lòng chọn từ 1 đến 4.");
             }
-        } while (choice != 4);
+        } while (choice != 5);
     }
 
     private static Candidate getCandidateLogin() {
@@ -101,7 +101,7 @@ public class ProfileUI {
                     candidate.setPhone(CandidateValidate.inputValidPhone(scanner));
                     break;
                 case 3:
-                    candidate.setExperience(Validator.validateInputInt(scanner, "Nhập số năm kinh nghiệm mới: "));
+                    candidate.setExperience(CandidateValidate.inputValidExperience(scanner));
                     break;
                 case 4:
                     candidate.setGender(CandidateValidate.inputValidGender(scanner));
@@ -157,7 +157,4 @@ public class ProfileUI {
             System.err.println("Có lỗi xảy ra khi đổi mật khẩu.");
         }
     }
-
-
-
 }

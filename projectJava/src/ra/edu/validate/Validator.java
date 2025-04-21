@@ -1,20 +1,22 @@
 package ra.edu.validate;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Validator {
+
     public static int validateInputInt(Scanner scanner, String message) {
         while (true) {
             System.out.print(message);
             try {
                 String input = scanner.nextLine().trim();
-                int number = Integer.parseInt(input);
-                return number;
+
+                if (input.isEmpty()) {
+                    System.err.println("Không được để trống! Vui lòng nhập lại.");
+                    continue;
+                }
+
+                return Integer.parseInt(input);
             } catch (NumberFormatException e) {
                 System.err.println("Không phải số nguyên, yêu cầu nhập lại!");
             } catch (Exception e) {
@@ -49,13 +51,19 @@ public class Validator {
     }
 
     public static double validateInputDouble(Scanner scanner, String message) {
-        System.out.println(message);
         while (true) {
+            System.out.print(message);
             try {
                 String input = scanner.nextLine().trim();
+
+                if (input.isEmpty()) {
+                    System.err.println("Không được để trống! Vui lòng nhập lại.");
+                    continue;
+                }
+
                 return Double.parseDouble(input);
             } catch (NumberFormatException e) {
-                System.out.println("Không phải số thực double, yêu cầu nhập lại!");
+                System.err.println("Không phải số thực double, yêu cầu nhập lại!");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -63,20 +71,26 @@ public class Validator {
     }
 
     public static boolean validateInputBoolean(Scanner scanner, String message) {
-        System.out.println(message + " (Nhập true/false)");
         while (true) {
+            System.out.print(message + " (Nhập true/false): ");
             try {
                 String input = scanner.nextLine().trim().toLowerCase();
+
+                if (input.isEmpty()) {
+                    System.err.println("Không được để trống! Vui lòng nhập lại.");
+                    continue;
+                }
+
                 if (!input.equals("true") && !input.equals("false")) {
                     throw new InputMismatchException("Không phải giá trị boolean hợp lệ, yêu cầu nhập lại (true/false)!");
                 }
+
                 return Boolean.parseBoolean(input);
             } catch (InputMismatchException e) {
-                System.out.println(e.getMessage());
+                System.err.println(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 }
-

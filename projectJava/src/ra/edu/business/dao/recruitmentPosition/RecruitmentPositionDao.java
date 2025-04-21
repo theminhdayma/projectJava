@@ -3,6 +3,11 @@ package ra.edu.business.dao.recruitmentPosition;
 import ra.edu.business.dao.AppDao;
 import ra.edu.business.model.recruitmentPosition.RecruitmentPosition;
 
-public interface RecruitmentPositionDao extends AppDao<RecruitmentPosition> {
+import java.util.List;
 
+public interface RecruitmentPositionDao extends AppDao<RecruitmentPosition> {
+    RecruitmentPosition getRecruitmentPositionById(int id);
+    int getTotalPage(int limit);
+    List<RecruitmentPosition> getRecruitmentPositionByPage(int page, int limit);
+    List<RecruitmentPosition> getAllRecruitmentPosition();
 }

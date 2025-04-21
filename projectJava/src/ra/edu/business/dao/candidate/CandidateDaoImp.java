@@ -50,7 +50,7 @@ public class CandidateDaoImp implements CandidateDao {
         CallableStatement callSt = null;
         try {
             conn = ConnectionDB.openConnection();
-            callSt = conn.prepareCall("{CALL add_candidate(?, ?, ?, ?, ?, ?, ?, ?)}");
+            callSt = conn.prepareCall("{CALL add_candidate(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
             callSt.setString(1, candidate.getName());
             callSt.setString(2, candidate.getEmail());
             callSt.setString(3, candidate.getPhone());
@@ -59,14 +59,22 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.setString(6, candidate.getDescription());
             callSt.setDate(7, Date.valueOf(candidate.getDob()));
             callSt.setString(8, candidate.getAccount().getPassword());
-            callSt.execute();
-            return true;
+
+            callSt.registerOutParameter(9, Types.INTEGER);
+
+            int result = callSt.executeUpdate();
+            if (result > 0) {
+                int generatedId = callSt.getInt(9);
+                candidate.setId(generatedId);
+                return true;
+            }
         } catch (SQLException e) {
             System.err.println("Lỗi thêm ứng viên: " + e.getMessage());
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
+        return false;
     }
 
     @Override

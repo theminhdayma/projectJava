@@ -1,7 +1,6 @@
 package ra.edu.business.model.candidate;
 
 import ra.edu.business.model.account.Account;
-import ra.edu.validate.Validator;
 import ra.edu.validate.candidate.CandidateValidate;
 
 import java.io.Serializable;
@@ -112,7 +111,7 @@ public class Candidate implements Serializable {
         this.name = CandidateValidate.inputValidName(scanner);
         this.email = CandidateValidate.inputValidEmail(scanner);
         this.phone = CandidateValidate.inputValidPhone(scanner);
-        this.experience = Validator.validateInputInt(scanner, "Nhập vào năm kinh nghiệm: ");
+        this.experience = CandidateValidate.inputValidExperience(scanner);
         this.gender = CandidateValidate.inputValidGender(scanner);
         this.description = CandidateValidate.inputValidDes(scanner);
         this.dob = CandidateValidate.inputValidDob(scanner);

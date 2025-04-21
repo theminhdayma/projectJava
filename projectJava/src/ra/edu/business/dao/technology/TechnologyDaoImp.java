@@ -34,6 +34,29 @@ public class TechnologyDaoImp implements TechnologyDao {
         }
     }
 
+    @Override
+    public List<Technology> getAllTechnology() {
+        List<Technology> technologyList = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL get_all_technology()}");
+            ResultSet rs = callSt.executeQuery();
+            while (rs.next()) {
+                Technology technology = new Technology();
+                technology.setId(rs.getInt("id"));
+                technology.setName(rs.getString("name"));
+                technology.setStatus(StatusTechnology.ACTIVE);
+                technologyList.add(technology);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return technologyList;
+    }
 
     @Override
     public boolean save(Technology technology) {
@@ -139,7 +162,7 @@ public class TechnologyDaoImp implements TechnologyDao {
                     Technology tech = new Technology();
                     tech.setId(rs.getInt("id"));
                     tech.setName(rs.getString("name"));
-                    tech.setStatus(StatusTechnology.ACTIVE);
+                    tech.setStatus(StatusTechnology.valueOf(rs.getString("status")));
                     technologies.add(tech);
                 }
             }
