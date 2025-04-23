@@ -107,20 +107,16 @@ public class CandidateUI {
             candidateService.getCandidateByPage(pageChoice, LIMIT)
                     .forEach(candidate -> {
                         int age = Period.between(candidate.getDob(), LocalDate.now()).getYears();
-                        String statusStr = candidate.getAccount().getStatus() == AccountStatus.ACTIVE ? "Hoạt động" : "Đã khóa";
-                        String genderStr = candidate.getGender() == Gender.MALE ? "Nam"
-                                : candidate.getGender() == Gender.FEMALE ? "Nữ"
-                                : "Khác";
                         System.out.printf("| %-3d | %-20s | %-23s | %-12s | %-8d | %-8s | %-10s | %-4d | %-10s |\n",
                                 candidate.getId(),
                                 candidate.getName(),
                                 candidate.getEmail(),
                                 candidate.getPhone(),
                                 candidate.getExperience(),
-                                genderStr,
+                                candidate.getGender().getDisplayName(),
                                 candidate.getDob(),
                                 age,
-                                statusStr
+                                candidate.getAccount().getStatus().getDisplayName()
                         );
                     });
 

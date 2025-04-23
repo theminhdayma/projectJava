@@ -11,4 +11,5 @@ public interface TechnologyDao extends AppDao<Technology> {
     Technology getTechnologyById(int id);
     boolean checkNameTechnology(Technology technology);
     List<Technology> getAllTechnology();
+    List<Technology> getTechnologyByRecruitmentPositionId(int recruitmentPositionId);
 }

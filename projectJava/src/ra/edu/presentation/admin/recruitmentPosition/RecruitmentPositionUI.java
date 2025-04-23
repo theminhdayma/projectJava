@@ -12,6 +12,8 @@ import ra.edu.business.service.technology.TechnologyServiceImp;
 import ra.edu.validate.Validator;
 import ra.edu.validate.recruitmentPosition.RecruitmentPositionValidate;
 
+import static ra.edu.utils.Util.truncate;
+
 import java.util.List;
 
 import static ra.edu.MainApplication.scanner;
@@ -100,14 +102,14 @@ public class RecruitmentPositionUI {
 
             System.out.println("\n== VỊ TRÍ TUYỂN DỤNG - TRANG " + pageChoice + " ==");
 
-            String line = "+-----+-----------------------------+------------+------------+--------------+-------------+-------------+------------+--------------+";
+            String line = "+-----+-----------------------------+------------+------------+--------------+-------------+-------------+------------+------------------------------------------+";
             System.out.println(line);
-            System.out.printf("| %-3s | %-27s | %-10s | %-10s | %-12s | %-11s | %-11s | %-10s | %-12s |\n",
-                    "ID", "Vị trí tuyển dụng", "Min Lương", "Max Lương", "Kinh Nghiệm", "Ngày Tạo", "Hết Hạn", "Trạng Thái", "Mô Tả");
+            System.out.printf("| %-3s | %-27s | %-10s | %-10s | %-12s | %-11s | %-11s | %-10s | %-40s |\n",
+                    "ID", "Vị trí tuyển dụng", "Min Lương ($)", "Max Lương($)", "Kinh Nghiệm (Năm)", "Ngày Tạo", "Hết Hạn", "Trạng Thái", "Mô Tả");
             System.out.println(line);
 
             for (RecruitmentPosition recruitmentPosition : listRecruitmentPosition) {
-                System.out.printf("| %-3d | %-27s | %-10.1f | %-10.1f | %-12d | %-11s | %-11s | %-10s | %-12s |\n",
+                System.out.printf("| %-3d | %-27s | %-10.1f | %-10.1f | %-12d | %-11s | %-11s | %-10s | %-40s |\n",
                         recruitmentPosition.getId(),
                         recruitmentPosition.getName(),
                         recruitmentPosition.getMinSalary(),
@@ -116,7 +118,7 @@ public class RecruitmentPositionUI {
                         recruitmentPosition.getCreatedDate(),
                         recruitmentPosition.getExpiredDate(),
                         recruitmentPosition.getStatus(),
-                        recruitmentPosition.getDescription()
+                        truncate(recruitmentPosition.getDescription(), 40)
                 );
             }
 
@@ -124,11 +126,11 @@ public class RecruitmentPositionUI {
         }
     }
 
-    public static List<Technology> getAllTechnology() {
+    private static List<Technology> getAllTechnology() {
         return technologyService.getAllTechnology();
     }
 
-    public static void choiceTechnologyName(int recruitmentPositionId) {
+    private static void choiceTechnologyName(int recruitmentPositionId) {
         List<Technology> technologyList = getAllTechnology();
         int choice;
 
@@ -180,9 +182,8 @@ public class RecruitmentPositionUI {
         boolean isSuccess = recruitmentPositionService.save(newPosition);
 
         if (isSuccess) {
-            System.out.println("Thêm vị trí tuyển dụng thành công!");
-
             choiceTechnologyName(newPosition.getId());
+            System.out.println("Thêm vị trí tuyển dụng thành công!");
         } else {
             System.err.println("Thêm vị trí tuyển dụng thất bại! Không thể chọn công nghệ.");
         }

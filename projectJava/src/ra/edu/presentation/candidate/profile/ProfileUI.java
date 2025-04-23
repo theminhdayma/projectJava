@@ -3,6 +3,7 @@ package ra.edu.presentation.candidate.profile;
 import ra.edu.business.model.candidate.Candidate;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
+import ra.edu.presentation.candidate.application.ApplicationApplied;
 import ra.edu.validate.Validator;
 import ra.edu.validate.candidate.CandidateValidate;
 
@@ -34,7 +35,7 @@ public class ProfileUI {
                     showProfile();
                     break;
                 case 4:
-
+                    ApplicationApplied.menuApplicationApplied();
                     break;
                 case 5:
                     System.out.println("\nLoading...");
@@ -46,7 +47,7 @@ public class ProfileUI {
         } while (choice != 5);
     }
 
-    private static Candidate getCandidateLogin() {
+    public static Candidate getCandidateLogin() {
         String token = readFromFile();
         Candidate candidate = null;
 

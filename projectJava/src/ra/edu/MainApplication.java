@@ -37,7 +37,7 @@ public class MainApplication {
         displayMenuApplication();
     }
 
-    public static void checkLoginAndDisplayMenu() {
+    private static void checkLoginAndDisplayMenu() {
         String token = readFromFile();
         if (token != null && !token.isEmpty()) {
             String[] parts = token.split(":");
@@ -93,7 +93,7 @@ public class MainApplication {
         } while (choice != 4);
     }
 
-    public static void loginAdmin() {
+    private static void loginAdmin() {
         Account admin = null;
         AdminService adminService = new AdminServiceImp();
         adminService.initAdmin();
@@ -119,7 +119,7 @@ public class MainApplication {
         } while (admin == null);
     }
 
-    public static void loginCandidate() {
+    private static void loginCandidate() {
         Account candidate = null;
         CandidateService candidateService = new CandidateServiceImp();
 
@@ -170,11 +170,11 @@ public class MainApplication {
         } while (candidate == null);
     }
 
-    public static List<Technology> getAllTechnology() {
+    private static List<Technology> getAllTechnology() {
         return technologyService.getAllTechnology();
     }
 
-    public static void choiceTechnologyName(int candidateId) {
+    private static void choiceTechnologyName(int candidateId) {
         List<Technology> technologyList = getAllTechnology();
         int choice;
 
@@ -197,7 +197,6 @@ public class MainApplication {
 
             switch (choice) {
                 case 0:
-                    System.out.println("Đăng kí công nghệ thành công.");
                     System.out.println("Loading...");
                     pause(1);
                     break;
@@ -207,14 +206,18 @@ public class MainApplication {
                     candidateTech.setCandidateId(candidateId);
                     candidateTech.setTechnologyId(selectedTech.getId());
 
-                    candidateTechnologyService.addCandidateTechnology(candidateTech);
+                    if (candidateTechnologyService.addCandidateTechnology(candidateTech)){
+                        System.out.println("Đăng ký công nghệ thành công: " + selectedTech.getName());
+                    } else {
+                        System.out.println("Đăng ký công nghệ thất bại. Vui lòng thử lại.");
+                    }
                     break;
             }
 
         } while (choice != 0);
     }
 
-    public static void registerCandidate() {
+    private static void registerCandidate() {
         Candidate candidate = null;
         CandidateService candidateService = new CandidateServiceImp();
 
@@ -222,13 +225,13 @@ public class MainApplication {
             System.out.println("==== Đăng ký ứng viên ====");
             Candidate inputCandidate = new Candidate();
             inputCandidate.inputData();
-            choiceTechnologyName(inputCandidate.getId());
 
             boolean isRegister = candidateService.save(inputCandidate);
             if (isRegister) {
-                System.out.println("Đăng ký thành công với vai trò ứng viên.");
                 pause(1);
                 candidate = inputCandidate;
+                choiceTechnologyName(candidate.getId());
+                System.out.println("Đăng ký thành công với vai trò ứng viên.");
             } else {
                 System.out.println("Đăng ký thất bại. Vui lòng thử lại.\n");
             }

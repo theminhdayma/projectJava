@@ -51,4 +51,9 @@ public class TechnologyServiceImp implements TechnologyService {
     public List<Technology> getAllTechnology() {
         return technologyDao.getAllTechnology();
     }
+
+    @Override
+    public List<Technology> getTechnologyByRecruitmentPositionId(int recruitmentPositionId) {
+        return technologyDao.getTechnologyByRecruitmentPositionId(recruitmentPositionId);
+    }
 }

@@ -1,6 +1,7 @@
 package ra.edu.business.dao.technology;
 
 import ra.edu.business.config.ConnectionDB;
+import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.technology.StatusTechnology;
 import ra.edu.business.model.technology.Technology;
 
@@ -48,6 +49,34 @@ public class TechnologyDaoImp implements TechnologyDao {
                 technology.setId(rs.getInt("id"));
                 technology.setName(rs.getString("name"));
                 technology.setStatus(StatusTechnology.ACTIVE);
+                technologyList.add(technology);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return technologyList;
+    }
+
+    @Override
+    public List<Technology> getTechnologyByRecruitmentPositionId(int recruitmentPositionId) {
+        List<Technology> technologyList = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL get_technology_by_recruitment_position_id(?)}");
+            callSt.setInt(1, recruitmentPositionId);
+            ResultSet rs = callSt.executeQuery();
+            while (rs.next()) {
+                Technology technology = new Technology();
+                technology.setId(rs.getInt("id"));
+                technology.setName(rs.getString("name"));
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    technology.setStatus(StatusTechnology.valueOf(statusStr));
+                }
                 technologyList.add(technology);
             }
         } catch (SQLException e) {

@@ -1,46 +1,36 @@
 package ra.edu.business.model.application;
 
+import ra.edu.validate.application.ApplicationValidate;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import static ra.edu.MainApplication.scanner;
 
 public class Application {
     private int id;
     private int candidateId;
     private int recruitmentPositionId;
     private String cvUrl;
-    private Progress progress; // 'pending', 'handling', 'interviewing', 'done'
-    private LocalDateTime interviewRequestDate;
-    private String interviewRequestResult;
-    private String interviewLink;
-    private LocalDateTime interviewTime;
-    private String interviewResult;
-    private String interviewResultNote;
-    private LocalDateTime destroyAt;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private Progress progress;
+    private LocalDate createAt;
+    private LocalDateTime interviewDate;
     private String destroyReason;
+    private LocalDate destroyDate;
 
     public Application() {
-    }
+    };
 
-    public Application(int id, int candidateId, int recruitmentPositionId, String cvUrl, Progress progress,
-                       LocalDateTime interviewRequestDate, String interviewRequestResult, String interviewLink,
-                       LocalDateTime interviewTime, String interviewResult, String interviewResultNote,
-                       LocalDateTime destroyAt, LocalDateTime createAt, LocalDateTime updateAt, String destroyReason) {
+    public Application(int id, int candidateId, int recruitmentPositionId, String cvUrl, Progress progress, LocalDate createAt, LocalDateTime interviewDate, String destroyReason, LocalDate destroyDate) {
         this.id = id;
         this.candidateId = candidateId;
         this.recruitmentPositionId = recruitmentPositionId;
         this.cvUrl = cvUrl;
         this.progress = progress;
-        this.interviewRequestDate = interviewRequestDate;
-        this.interviewRequestResult = interviewRequestResult;
-        this.interviewLink = interviewLink;
-        this.interviewTime = interviewTime;
-        this.interviewResult = interviewResult;
-        this.interviewResultNote = interviewResultNote;
-        this.destroyAt = destroyAt;
         this.createAt = createAt;
-        this.updateAt = updateAt;
+        this.interviewDate = interviewDate;
         this.destroyReason = destroyReason;
+        this.destroyDate = destroyDate;
     }
 
     public int getId() {
@@ -82,77 +72,12 @@ public class Application {
     public void setProgress(Progress progress) {
         this.progress = progress;
     }
-
-    public LocalDateTime getInterviewRequestDate() {
-        return interviewRequestDate;
-    }
-
-    public void setInterviewRequestDate(LocalDateTime interviewRequestDate) {
-        this.interviewRequestDate = interviewRequestDate;
-    }
-
-    public String getInterviewRequestResult() {
-        return interviewRequestResult;
-    }
-
-    public void setInterviewRequestResult(String interviewRequestResult) {
-        this.interviewRequestResult = interviewRequestResult;
-    }
-
-    public String getInterviewLink() {
-        return interviewLink;
-    }
-
-    public void setInterviewLink(String interviewLink) {
-        this.interviewLink = interviewLink;
-    }
-
-    public LocalDateTime getInterviewTime() {
-        return interviewTime;
-    }
-
-    public void setInterviewTime(LocalDateTime interviewTime) {
-        this.interviewTime = interviewTime;
-    }
-
-    public String getInterviewResult() {
-        return interviewResult;
-    }
-
-    public void setInterviewResult(String interviewResult) {
-        this.interviewResult = interviewResult;
-    }
-
-    public String getInterviewResultNote() {
-        return interviewResultNote;
-    }
-
-    public void setInterviewResultNote(String interviewResultNote) {
-        this.interviewResultNote = interviewResultNote;
-    }
-
-    public LocalDateTime getDestroyAt() {
-        return destroyAt;
-    }
-
-    public void setDestroyAt(LocalDateTime destroyAt) {
-        this.destroyAt = destroyAt;
-    }
-
-    public LocalDateTime getCreateAt() {
+    public LocalDate getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(LocalDateTime createAt) {
+    public void setCreateAt(LocalDate createAt) {
         this.createAt = createAt;
-    }
-
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
     }
 
     public String getDestroyReason() {
@@ -161,6 +86,26 @@ public class Application {
 
     public void setDestroyReason(String destroyReason) {
         this.destroyReason = destroyReason;
+    }
+
+    public LocalDate getDestroyDate() {
+        return destroyDate;
+    }
+
+    public void setDestroyDate(LocalDate destroyDate) {
+        this.destroyDate = destroyDate;
+    }
+
+    public void inputData() {
+        this.cvUrl = ApplicationValidate.validateCvUrl(scanner);
+    }
+
+    public LocalDateTime getInterviewDate() {
+        return interviewDate;
+    }
+
+    public void setInterviewDate(LocalDateTime interviewDate) {
+        this.interviewDate = interviewDate;
     }
 }
 

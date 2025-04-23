@@ -127,7 +127,6 @@ public class CandidateValidate {
         return dob;
     }
 
-
     public static Gender inputValidGender(Scanner scanner) {
         while (true) {
             System.out.println("Chọn giới tính:");

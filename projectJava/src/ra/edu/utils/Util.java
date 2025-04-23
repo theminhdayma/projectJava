@@ -15,4 +15,21 @@ public class Util {
 
         MainApplication.displayMenuApplication();
     }
+
+    public final static String getAccountLogin() {
+        String token = FileUtil.readFromFile();
+        if (token != null && !token.isBlank()) {
+            String[] parts = token.split(":");
+            return parts[1];
+        } else {
+            return null;
+        }
+    }
+
+    public static String truncate(String value, int maxLength) {
+        if (value.length() <= maxLength) {
+            return value;
+        }
+        return value.substring(0, maxLength - 3) + "...";
+    }
 }

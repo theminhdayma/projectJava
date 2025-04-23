@@ -1,6 +1,8 @@
 package ra.edu.presentation.candidate;
 
+import ra.edu.presentation.candidate.application.ApplicationApplied;
 import ra.edu.presentation.candidate.profile.ProfileUI;
+import ra.edu.presentation.candidate.recruitmentPositionAndApply.RecruitmentPositionAndApply;
 import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
@@ -23,8 +25,10 @@ public class CandidateMain {
                     ProfileUI.displayMenuProfile();
                     break;
                 case 2:
+                    RecruitmentPositionAndApply.recruitmentPositionAndApply();
                     break;
                 case 3:
+                    ApplicationApplied.menuApplicationApplied();
                     break;
                 case 4:
                     System.out.println("\nLoading...");

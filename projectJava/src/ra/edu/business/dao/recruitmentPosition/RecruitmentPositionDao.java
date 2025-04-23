@@ -2,6 +2,7 @@ package ra.edu.business.dao.recruitmentPosition;
 
 import ra.edu.business.dao.AppDao;
 import ra.edu.business.model.recruitmentPosition.RecruitmentPosition;
+import ra.edu.business.model.technology.Technology;
 
 import java.util.List;
 

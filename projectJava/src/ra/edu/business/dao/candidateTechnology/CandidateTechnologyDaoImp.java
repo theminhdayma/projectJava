@@ -24,14 +24,13 @@ public class CandidateTechnologyDaoImp implements CandidateTechnologyDao {
 
         } catch (SQLException e) {
             if ("45000".equals(e.getSQLState())) {
-                System.err.println("❌ Lỗi: " + e.getMessage());
+                System.err.println("Lỗi: " + e.getMessage());
             } else {
-                System.err.println("❌ Lỗi thêm công nghệ cho ứng viên: " + e.getMessage());
+                System.err.println("Lỗi thêm công nghệ cho ứng viên: " + e.getMessage());
             }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
         return false;
     }
-
 }

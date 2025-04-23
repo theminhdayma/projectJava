@@ -197,7 +197,10 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
                 position.setMinExperience(rs.getInt("minExperience"));
                 position.setCreatedDate(rs.getDate("createdDate").toLocalDate());
                 position.setExpiredDate(rs.getDate("expiredDate").toLocalDate());
-                position.setStatus(RecruitmentPositionStatus.valueOf(rs.getString("status")));
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    position.setStatus(RecruitmentPositionStatus.valueOf(statusStr));
+                }
 
                 recruitmentPositions.add(position);
             }
