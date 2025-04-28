@@ -3,24 +3,17 @@ package ra.edu.validate.candidate;
 import ra.edu.business.model.candidate.Gender;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
+import ra.edu.utils.Color;
 import ra.edu.validate.Validator;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 
 public class CandidateValidate {
-    private static CandidateService candidateService;
-
-    public static CandidateService getCandidateService() {
-        if (candidateService == null) {
-            candidateService = new CandidateServiceImp();
-        }
-        return candidateService;
-    }
+    private static final CandidateService candidateService = new CandidateServiceImp();
 
     public static String inputValidName(Scanner scanner) {
         String name;
@@ -28,7 +21,7 @@ public class CandidateValidate {
             System.out.print("Nhập tên ứng viên: ");
             name = scanner.nextLine();
             if (name == null || name.trim().isEmpty()) {
-                System.err.println("Tên ứng viên không được để trống.");
+                System.out.println(Color.RED + "Tên ứng viên không được để trống." + Color.RESET);
             } else {
                 break;
             }
@@ -36,13 +29,17 @@ public class CandidateValidate {
         return name;
     }
 
-    public static String inputValidPassword(Scanner scanner, String massage) {
+
+    public static String inputValidPassword(Scanner scanner, String message) {
         String password;
         do {
-            System.out.print(massage);
-            password = scanner.nextLine();
+            System.out.print(message);
+            password = scanner.nextLine().trim();
+
             if (password == null || password.trim().isEmpty()) {
-                System.err.println("Mật khẩu không được để trống.");
+                System.out.println(Color.RED + "Mật khẩu không được để trống." + Color.RESET);
+            } else if (password.length() < 6) {
+                System.out.println(Color.RED + "Mật khẩu phải có ít nhất 6 ký tự." + Color.RESET);
             } else {
                 break;
             }
@@ -54,15 +51,16 @@ public class CandidateValidate {
         String description;
         do {
             System.out.print("Nhập mô tả bản thân: ");
-            description = scanner.nextLine();
+            description = scanner.nextLine().trim();
             if (description == null || description.trim().isEmpty()) {
-                System.err.println("Mô tả bản thân không được để trống.");
+                System.out.println(Color.RED + "Mô tả bản thân không được để trống." + Color.RESET);
             } else {
                 break;
             }
         } while (true);
         return description;
     }
+
 
     public static String inputValidEmail(Scanner scanner) {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -72,9 +70,29 @@ public class CandidateValidate {
             email = scanner.nextLine().trim();
 
             if (email.isEmpty()) {
-                System.err.println("Email không được để trống.");
+                System.out.println(Color.RED + "Email không được để trống." + Color.RESET);
             } else if (!Pattern.matches(emailRegex, email)) {
-                System.err.println("Email không đúng định dạng.");
+                System.out.println(Color.RED + "Email không đúng định dạng." + Color.RESET);
+            } else if (candidateService.checkEmailCandidate(email)) {
+                System.out.println(Color.RED + "Email đã tồn tại. Vui lòng nhập email khác." + Color.RESET);
+            } else {
+                break;
+            }
+        } while (true);
+        return email;
+    }
+
+    public static String inputValidEmailLogin(Scanner scanner) {
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        String email;
+        do {
+            System.out.print("Nhập email: ");
+            email = scanner.nextLine().trim();
+
+            if (email.isEmpty()) {
+                System.out.println(Color.RED + "Email không được để trống." + Color.RESET);
+            } else if (!Pattern.matches(emailRegex, email)) {
+                System.out.println(Color.RED + "Email không đúng định dạng." + Color.RESET);
             } else {
                 break;
             }
@@ -87,12 +105,15 @@ public class CandidateValidate {
         String phone;
         do {
             System.out.print("Nhập số điện thoại: ");
-            phone = scanner.nextLine();
+            phone = scanner.nextLine().trim();
+
             if (phone == null || phone.trim().isEmpty()) {
-                System.err.println("Số điện thoại không hợp lệ.");
+                System.out.println(Color.RED + "Số điện thoại không hợp lệ." + Color.RESET);
             } else if (!Pattern.matches(phoneRegex, phone)) {
-                System.err.println("Số điện thoại không hợp lệ. Vui lòng nhập lại.");
-            }else {
+                System.out.println(Color.RED + "Số điện thoại không hợp lệ. Vui lòng nhập lại." + Color.RESET);
+            } else if (candidateService.checkPhoneCandidate(phone)) {
+                System.out.println(Color.RED + "Số điện thoại đã tồn tại. Vui lòng nhập số điện thoại khác." + Color.RESET);
+            } else {
                 break;
             }
         } while (true);
@@ -101,26 +122,48 @@ public class CandidateValidate {
 
     public static LocalDate inputValidDob(Scanner scanner) {
         LocalDate dob = null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         while (dob == null) {
-            System.out.print("Nhập ngày sinh (định dạng dd-MM-yyyy): ");
+            System.out.print("Nhập ngày sinh (dd-MM-yyyy): ");
             String input = scanner.nextLine().trim();
 
             if (input.isEmpty()) {
-                System.err.println("Không được để trống ngày sinh.\n");
+                System.out.println(Color.RED + "Không được để trống ngày sinh." + Color.RESET);
                 continue;
             }
 
+            if (!input.matches("^\\d{2}-\\d{2}-\\d{4}$")) {
+                System.out.println(Color.RED + "Định dạng phải là dd-MM-yyyy (ngày và tháng 2 chữ số, năm 4 chữ số)." + Color.RESET);
+                continue;
+            }
+
+            String[] parts = input.split("-");
+            int day, month, year;
+
             try {
-                dob = LocalDate.parse(input, formatter);
+                day = Integer.parseInt(parts[0]);
+                month = Integer.parseInt(parts[1]);
+                year = Integer.parseInt(parts[2]);
+
+                if (year < 1950 || year > LocalDate.now().getYear()) {
+                    System.out.println(Color.RED + "Năm không hợp lệ (1950 - năm hiện tại)." + Color.RESET);
+                    continue;
+                }
+
+                if (month < 1 || month > 12) {
+                    System.out.println(Color.RED + "Tháng không hợp lệ (01 - 12)." + Color.RESET);
+                    continue;
+                }
+
+                dob = LocalDate.of(year, month, day);
 
                 if (dob.isAfter(LocalDate.now())) {
-                    System.err.println("Ngày sinh không được lớn hơn ngày hiện tại.\n");
+                    System.out.println(Color.RED + "Ngày sinh không được lớn hơn ngày hiện tại." + Color.RESET);
                     dob = null;
                 }
-            } catch (DateTimeParseException e) {
-                System.err.println("Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy.\n");
+
+            } catch (DateTimeException e) {
+                System.out.println(Color.RED + "Ngày không hợp lệ với tháng hoặc năm." + Color.RESET);
             }
         }
 
@@ -133,7 +176,6 @@ public class CandidateValidate {
             System.out.println("1. Nam");
             System.out.println("2. Nữ");
             System.out.println("3. Khác");
-            System.out.print("Lựa chọn của bạn: ");
 
             int choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
             switch (choice) {
@@ -144,25 +186,24 @@ public class CandidateValidate {
                 case 3:
                     return Gender.OTHER;
                 default:
-                    System.err.println("Lựa chọn không hợp lệ, vui lòng chọn lại (1-3).");
+                    System.out.println(Color.RED + "Lựa chọn không hợp lệ, vui lòng chọn lại (1-3)." + Color.RESET);  // Thông báo lỗi màu đỏ
             }
         }
     }
 
-    public static int inputValidExperience (Scanner scanner) {
+    public static int inputValidExperience(Scanner scanner) {
         int experience;
         do {
             try {
                 experience = Validator.validateInputInt(scanner, "Nhập số năm kinh nghiệm: ");
                 if (experience < 0) {
-                    System.err.println("Số năm kinh nghiệm không được âm.");
+                    System.out.println(Color.RED + "Số năm kinh nghiệm không được âm." + Color.RESET);
                 } else {
                     return experience;
                 }
             } catch (NumberFormatException e) {
-                System.err.println("Vui lòng nhập đúng định dạng số.");
+                System.out.println(Color.RED + "Vui lòng nhập đúng định dạng số." + Color.RESET);
             }
         } while (true);
     }
-
 }

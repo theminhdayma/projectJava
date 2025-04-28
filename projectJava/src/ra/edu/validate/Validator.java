@@ -1,5 +1,7 @@
 package ra.edu.validate;
 
+import ra.edu.utils.Color;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -12,13 +14,13 @@ public class Validator {
                 String input = scanner.nextLine().trim();
 
                 if (input.isEmpty()) {
-                    System.err.println("Không được để trống! Vui lòng nhập lại.");
+                    System.out.println(Color.RED + "Không được để trống! Vui lòng nhập lại." + Color.RESET);
                     continue;
                 }
 
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.err.println("Không phải số nguyên, yêu cầu nhập lại!");
+                System.out.println(Color.RED + "Không phải số nguyên, yêu cầu nhập lại!" + Color.RESET);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -34,7 +36,7 @@ public class Validator {
                         .trim();
 
                 if (input.isEmpty()) {
-                    throw new IllegalArgumentException("Không được để trống! Vui lòng nhập lại");
+                    System.out.println(Color.RED + "Không được để trống! Vui lòng nhập lại." + Color.RESET);
                 }
 
                 if (!rule.isValidString(input)) {
@@ -43,7 +45,7 @@ public class Validator {
 
                 return input;
             } catch (IllegalArgumentException e) {
-                System.err.println(e.getMessage());
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -57,37 +59,13 @@ public class Validator {
                 String input = scanner.nextLine().trim();
 
                 if (input.isEmpty()) {
-                    System.err.println("Không được để trống! Vui lòng nhập lại.");
+                    System.out.println(Color.RED + "Không được để trống! Vui lòng nhập lại." + Color.RESET);
                     continue;
                 }
 
                 return Double.parseDouble(input);
             } catch (NumberFormatException e) {
-                System.err.println("Không phải số thực double, yêu cầu nhập lại!");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static boolean validateInputBoolean(Scanner scanner, String message) {
-        while (true) {
-            System.out.print(message + " (Nhập true/false): ");
-            try {
-                String input = scanner.nextLine().trim().toLowerCase();
-
-                if (input.isEmpty()) {
-                    System.err.println("Không được để trống! Vui lòng nhập lại.");
-                    continue;
-                }
-
-                if (!input.equals("true") && !input.equals("false")) {
-                    throw new InputMismatchException("Không phải giá trị boolean hợp lệ, yêu cầu nhập lại (true/false)!");
-                }
-
-                return Boolean.parseBoolean(input);
-            } catch (InputMismatchException e) {
-                System.err.println(e.getMessage());
+                System.out.println(Color.RED + "Không phải số thực double, yêu cầu nhập lại!" + Color.RESET);
             } catch (Exception e) {
                 e.printStackTrace();
             }

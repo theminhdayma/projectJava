@@ -88,6 +88,11 @@ public class CandidateServiceImp implements CandidateService {
     }
 
     @Override
+    public List<Candidate> filterByCandidateTechnology(int technologyId) {
+        return candidateDao.filterByCandidateTechnology(technologyId);
+    }
+
+    @Override
     public boolean changePasswordCandidate(int accountId, String newPassword) {
         return candidateDao.changePasswordCandidate(accountId, newPassword);
     }
@@ -95,5 +100,10 @@ public class CandidateServiceImp implements CandidateService {
     @Override
     public Candidate getCandidateByEmail(String email) {
         return candidateDao.getCandidateByEmail(email);
+    }
+
+    @Override
+    public boolean checkPhoneCandidate(String phone) {
+        return candidateDao.checkPhoneCandidate(phone);
     }
 }

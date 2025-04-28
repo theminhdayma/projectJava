@@ -9,6 +9,7 @@ import ra.edu.business.service.recruitmentPositionTechnology.RecruitmentPosition
 import ra.edu.business.service.recruitmentPositionTechnology.RecruitmentPositionTechnologyServiceImp;
 import ra.edu.business.service.technology.TechnologyService;
 import ra.edu.business.service.technology.TechnologyServiceImp;
+import ra.edu.utils.Color;
 import ra.edu.validate.Validator;
 import ra.edu.validate.recruitmentPosition.RecruitmentPositionValidate;
 
@@ -27,13 +28,18 @@ public class RecruitmentPositionUI {
     public static void displayMenuRecruitmentPosition() {
         int choice;
         do {
-            System.out.println("\n====== QUẢN LÝ VỊ TRÍ TUYỂN DỤNG ======");
-            System.out.println("1. Thêm vị trí tuyển dụng mới");
-            System.out.println("2. Cập nhật vị trí tuyển dụng");
-            System.out.println("3. Xóa vị trí tuyển dụng");
-            System.out.println("4. Xem danh sách vị trí tuyển dụng");
-            System.out.println("5. Quay lại menu chính");
-            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
+            System.out.println("\n" + Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.BOLD + Color.center("QUẢN LÝ VỊ TRÍ TUYỂN DỤNG", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+
+            System.out.printf("| %-3s | %-50s |\n", "1", "Thêm vị trí tuyển dụng mới");
+            System.out.printf("| %-3s | %-50s |\n", "2", "Cập nhật vị trí tuyển dụng");
+            System.out.printf("| %-3s | %-50s |\n", "3", "Xóa vị trí tuyển dụng");
+            System.out.printf("| %-3s | %-50s |\n", "4", "Xem danh sách vị trí tuyển dụng");
+            System.out.printf("| %-3s | %-50s |\n", "0", "Quay lại menu chính");
+
+            System.out.println(Color.GREEN + Color.repeat("-", Color.WIDTH) + Color.RESET);
+            choice = Validator.validateInputInt(scanner, Color.CYAN + "Mời bạn chọn: " + Color.RESET);
 
             switch (choice) {
                 case 1:
@@ -48,15 +54,16 @@ public class RecruitmentPositionUI {
                 case 4:
                     showAllRecruitmentPosition();
                     break;
-                case 5:
-                    System.out.println("\nLoading...");
+                case 0:
+                    System.out.println("\nĐang quay về menu chính...");
                     pause(1);
                     break;
                 default:
-                    System.out.println("Không hợp lệ, vui lòng chọn từ 1 đến 5.");
+                    System.out.println(Color.RED + "Lựa chọn không hợp lệ, vui lòng thử lại." + Color.RESET);
             }
-        } while (choice != 5);
+        } while (choice != 0);
     }
+
 
     private static RecruitmentPosition getRecruitmentPositionById() {
         RecruitmentPosition recruitmentPosition = null;
@@ -135,9 +142,9 @@ public class RecruitmentPositionUI {
         int choice;
 
         do {
-            System.out.println("\n=============================");
-            System.out.println("DANH SÁCH CÔNG NGHỆ HIỆN CÓ");
-            System.out.println("=============================");
+            System.out.println("\n=======================================");
+            System.out.println("ĐĂNG KÝ CÔNG NGHỆ CHO VỊ TRÍ TUYỂN DỤNG");
+            System.out.println("========================================");
             for (int i = 0; i < technologyList.size(); i++) {
                 System.out.printf("%2d. %s\n", (i + 1), technologyList.get(i).getName());
             }
@@ -203,7 +210,7 @@ public class RecruitmentPositionUI {
             System.out.println("4. Lương tối đa ");
             System.out.println("5. Kinh nghiệm tối thiểu ");
             System.out.println("6. Ngày hết hạn ");
-            System.out.println("7. Lưu và thoát");
+            System.out.println("0. Lưu và thoát");
 
             choice = Validator.validateInputInt(scanner, "Chọn mục muốn cập nhật: ");
 
@@ -226,7 +233,7 @@ public class RecruitmentPositionUI {
                 case 6:
                     existing.setExpiredDate(RecruitmentPositionValidate.inputValidExpiredDate(scanner, existing.getExpiredDate()));
                     break;
-                case 7:
+                case 0:
                     System.out.println("Đã lưu thay đổi và thoát.");
                     System.out.println("\nLoading...");
                     pause(1);
@@ -234,7 +241,7 @@ public class RecruitmentPositionUI {
                 default:
                     System.err.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
             }
-        } while (choice != 7);
+        } while (choice != 0);
 
         boolean isUpdated = recruitmentPositionService.update(existing);
         if (isUpdated) {
@@ -272,6 +279,4 @@ public class RecruitmentPositionUI {
             }
         } while (true);
     }
-
-
 }

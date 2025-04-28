@@ -2,9 +2,13 @@ package ra.edu.presentation.admin.candidate;
 
 import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.candidate.Candidate;
-import ra.edu.business.model.candidate.Gender;
+import ra.edu.business.model.technology.Technology;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
+import ra.edu.business.service.technology.TechnologyService;
+import ra.edu.business.service.technology.TechnologyServiceImp;
+import ra.edu.utils.Color;
+import ra.edu.utils.SendEmail;
 import ra.edu.validate.Validator;
 
 import java.security.SecureRandom;
@@ -12,23 +16,30 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
+
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.ThreadUtil.pause;
 import static ra.edu.utils.Util.LIMIT;
 
 public class CandidateUI {
     private static final CandidateService candidateService = new CandidateServiceImp();
+    private static final TechnologyService technologyService = new TechnologyServiceImp();
     public static void displayMenuCandidate() {
         int choice;
         do {
-            System.out.println("\n====== QUẢN LÝ ỨNG VIÊN ======");
-            System.out.println("1. Hiển thị danh sách ứng viên");
-            System.out.println("2. Khóa/mở khóa tài khoản ứng viên");
-            System.out.println("3. Reset mật khẩu ứng viên");
-            System.out.println("4. Tìm kiếm ứng viên theo tên");
-            System.out.println("5. Lọc ứng viên theo yêu cầu");
-            System.out.println("6. Quay về menu chính");
-            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
+            System.out.println("\n" + Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.BOLD + Color.center("QUẢN LÝ ỨNG VIÊN", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+
+            System.out.printf("| %-3s | %-50s |\n", "1", "Hiển thị danh sách ứng viên");
+            System.out.printf("| %-3s | %-50s |\n", "2", "Khóa/mở khóa tài khoản ứng viên");
+            System.out.printf("| %-3s | %-50s |\n", "3", "Reset mật khẩu ứng viên");
+            System.out.printf("| %-3s | %-50s |\n", "4", "Tìm kiếm ứng viên theo tên");
+            System.out.printf("| %-3s | %-50s |\n", "5", "Lọc ứng viên theo yêu cầu");
+            System.out.printf("| %-3s | %-50s |\n", "0", "Quay về menu chính");
+
+            System.out.println(Color.GREEN + Color.repeat("-", Color.WIDTH) + Color.RESET);
+            choice = Validator.validateInputInt(scanner, Color.CYAN + "Mời bạn chọn: " + Color.RESET);
 
             switch (choice) {
                 case 1:
@@ -46,15 +57,16 @@ public class CandidateUI {
                 case 5:
                     displayMenuFilter();
                     break;
-                case 6:
-                    System.out.println("\nLoading...");
+                case 0:
+                    System.out.println("\nĐang quay về menu chính...");
                     pause(1);
                     break;
                 default:
-                    System.out.println("Không hợp lệ, vui lòng chọn từ 1 đến 6.");
+                    System.out.println(Color.RED + "Lựa chọn không hợp lệ, vui lòng thử lại." + Color.RESET);
             }
-        } while (choice != 6);
+        } while (choice != 0);
     }
+
 
     private static Candidate findCandidateById() {
         Candidate candidate = null;
@@ -135,7 +147,7 @@ public class CandidateUI {
         do {
             System.out.println("1. Khóa tài khoản");
             System.out.println("2. Mở khóa tài khoản");
-            System.out.println("3. Thoát");
+            System.out.println("0. Thoát");
             choice = Validator.validateInputInt(scanner, "Nhập lựa chọn: ");
 
             switch (choice) {
@@ -145,7 +157,7 @@ public class CandidateUI {
                 case 2:
                     unlockCandidate(candidate);
                     return;
-                case 3:
+                case 0:
                     System.out.println("Thoát khỏi chức năng xử lý tài khoản.");
                     break;
 
@@ -153,7 +165,7 @@ public class CandidateUI {
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
                     break;
             }
-        } while (choice != 3);
+        } while (choice != 0);
     }
 
     private static void lockCandidate(Candidate candidate) {
@@ -175,7 +187,7 @@ public class CandidateUI {
                     System.out.println("Đã hủy thao tác khóa tài khoản.");
                     break;
                 default:
-                    System.out.println("Lựa chọn không hợp lệ.");
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
                     break;
             }
         } else {
@@ -202,7 +214,7 @@ public class CandidateUI {
                     System.out.println("Đã hủy thao tác mở khóa tài khoản.");
                     break;
                 default:
-                    System.out.println("Lựa chọn không hợp lệ.");
+                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
                     break;
             }
         } else {
@@ -241,7 +253,8 @@ public class CandidateUI {
                     boolean success = candidateService.resetCandidatePassword(candidate.getId(), password);
                     if (success) {
                         System.out.println("Reset mật khẩu thành công.");
-                        System.out.println("Mật khẩu mới cho ứng viên là: " + password);
+
+                        SendEmail.sendPasswordEmail(candidate.getEmail(), password);
                     } else {
                         System.out.println("Reset mật khẩu thất bại.");
                     }
@@ -257,6 +270,7 @@ public class CandidateUI {
             }
         } while (true);
     }
+
 
     private static void searchCandidateByName() {
         System.out.print("Nhập tên ứng viên cần tìm: ");
@@ -278,7 +292,7 @@ public class CandidateUI {
                 candidate.getEmail(),
                 candidate.getPhone(),
                 candidate.getExperience(),
-                candidate.getAccount().getStatus() == AccountStatus.ACTIVE ? "Hoạt động" : "Đã khóa"
+                candidate.getAccount().getStatus().getDisplayName()
         ));
         System.out.println("+-----+----------------------+-------------------------+--------------+----------+------------+");
     }
@@ -290,7 +304,8 @@ public class CandidateUI {
             System.out.println("1. Lọc theo giới tính");
             System.out.println("2. Lọc theo số năm kinh nghiệm");
             System.out.println("3. Lọc theo độ tuổi");
-            System.out.println("4. Quay lại menu chính");
+            System.out.println("4. Lọc theo công nghệ ứng viên");
+            System.out.println("0. Quay lại menu chính");
 
             choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
@@ -305,13 +320,17 @@ public class CandidateUI {
                     filterByAge();
                     break;
                 case 4:
-                    System.out.println("Quay lại menu chính.");
+                    filterByCandidateTechnology();
+                    break;
+                case 0:
+                    System.out.println("Quay lại menu chính...");
+                    pause(1);
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ, vui lòng chọn lại.");
                     break;
             }
-        } while (choice != 4);
+        } while (choice != 0);
     }
 
     private static void filterByGender() {
@@ -321,7 +340,7 @@ public class CandidateUI {
             System.out.println("1. NAM");
             System.out.println("2. NỮ");
             System.out.println("3. KHÁC");
-            System.out.println("4. Quay lại");
+            System.out.println("0. Quay lại");
 
             genderChoice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
 
@@ -335,14 +354,15 @@ public class CandidateUI {
                 case 3:
                     displayFilteredCandidates(candidateService.filterByGender("OTHER"));
                     break;
-                case 4:
+                case 0:
                     System.out.println("Quay lại menu chính.");
+                    pause(1);
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ, vui lòng chọn lại.");
                     break;
             }
-        } while (genderChoice != 4);
+        } while (genderChoice != 0);
     }
 
     private static void filterByExperience() {
@@ -370,11 +390,6 @@ public class CandidateUI {
 
         filteredList.forEach(candidate -> {
             int age = Period.between(candidate.getDob(), LocalDate.now()).getYears();
-            String statusStr = candidate.getAccount().getStatus() == AccountStatus.ACTIVE ? "Hoạt động" : "Đã khóa";
-
-            String genderStr = candidate.getGender() == Gender.MALE ? "Nam"
-                    : candidate.getGender() == Gender.FEMALE ? "Nữ"
-                    : "Khác";
 
             System.out.printf("| %-3d | %-20s | %-23s | %-12s | %-8d | %-8s | %-10s | %-4d | %-10s |\n",
                     candidate.getId(),
@@ -382,13 +397,75 @@ public class CandidateUI {
                     candidate.getEmail(),
                     candidate.getPhone(),
                     candidate.getExperience(),
-                    genderStr,
+                    candidate.getGender().getDisplayName(),
                     candidate.getDob(),
                     age,
-                    statusStr
+                    candidate.getAccount().getStatus().getDisplayName()
             );
         });
 
         System.out.println("+-----+----------------------+-------------------------+--------------+----------+----------+------------+------+------------+");
+    }
+
+    private static void displayAllTechnologies() {
+        List<Technology> technologies = technologyService.getAllTechnology();
+        if (technologies.isEmpty()) {
+            System.out.println(Color.RED + "Không có công nghệ nào để hiển thị." + Color.RESET);
+            return;
+        }
+
+        System.out.println(Color.BLUE + Color.BOLD + "\nDANH SÁCH CÔNG NGHỆ HIỆN CÓ" + Color.RESET);
+
+        int idWidth = 4;
+        int nameWidth = technologies.stream()
+                .mapToInt(t -> t.getName().length())
+                .max()
+                .orElse(20);
+        nameWidth = Math.max(nameWidth, 20);
+
+        String top = "┌" + "─".repeat(idWidth + 2) + "┬" + "─".repeat(nameWidth + 2) + "┐";
+        String mid = "├" + "─".repeat(idWidth + 2) + "┼" + "─".repeat(nameWidth + 2) + "┤";
+        String bot = "└" + "─".repeat(idWidth + 2) + "┴" + "─".repeat(nameWidth + 2) + "┘";
+
+        // In bảng
+        System.out.println(Color.YELLOW + top);
+        String header = String.format("│ %-"+idWidth+"s │ %-"+nameWidth+"s │", "ID", "Tên Công Nghệ");
+        System.out.println(header);
+        System.out.println(mid);
+
+        for (Technology tech : technologies) {
+            String row = String.format("│ %-"+idWidth+"d │ %-"+nameWidth+"s │",
+                    tech.getId(), tech.getName());
+            System.out.println(row);
+        }
+
+        System.out.println(bot + Color.RESET);
+    }
+
+    private static void filterByCandidateTechnology() {
+        int choice;
+        do {
+            List<Technology> technologies = technologyService.getAllTechnology();
+            displayAllTechnologies();
+            System.out.println(Color.CYAN + "0. Quay lại" + Color.RESET);
+
+            choice = Validator.validateInputInt(scanner, "Mời bạn chọn ID công nghệ để lọc ứng viên: ");
+            if (choice == 0) {
+                System.out.println(Color.GREEN + "Quay lại menu chính." + Color.RESET);
+                pause(1);
+                break;
+            }
+
+            int choiceId = choice;
+            boolean isValidTechnology = technologies.stream().anyMatch(t -> t.getId() == choiceId);
+            if (!isValidTechnology) {
+                System.out.println(Color.RED + "ID công nghệ không hợp lệ, vui lòng chọn lại!" + Color.RESET);
+                continue;
+            }
+
+            List<Candidate> filteredCandidates = candidateService.filterByCandidateTechnology(choice);
+            displayFilteredCandidates(filteredCandidates);
+
+        } while (true);
     }
 }

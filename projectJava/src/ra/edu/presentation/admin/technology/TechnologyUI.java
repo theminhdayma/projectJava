@@ -2,25 +2,30 @@ package ra.edu.presentation.admin.technology;
 
 import ra.edu.business.model.technology.Technology;
 import ra.edu.business.service.technology.TechnologyServiceImp;
+import ra.edu.utils.Color;
+import ra.edu.utils.Util;
 import ra.edu.validate.Validator;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.ThreadUtil.pause;
-import static ra.edu.utils.Util.LIMIT;
 
 public class TechnologyUI {
     private static final TechnologyServiceImp technologyService = new TechnologyServiceImp();
     public static void displayMenuTechnology() {
         int choice;
         do {
-            System.out.println("\n====== MENU CÔNG NGHỆ ======");
-            System.out.println("1. Xem danh sách công nghệ");
-            System.out.println("2. Thêm công nghệ");
-            System.out.println("3. Sửa công nghệ");
-            System.out.println("4. Xóa công nghệ");
-            System.out.println("5. Quay về menu chính");
-            System.out.print("Chọn: ");
-            choice = Validator.validateInputInt(scanner, "Mời bạn chọn: ");
+            System.out.println("\n" + Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.BOLD + Color.center("MENU CÔNG NGHỆ", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+
+            System.out.printf("| %-3s | %-50s |\n", "1", "Xem danh sách công nghệ");
+            System.out.printf("| %-3s | %-50s |\n", "2", "Thêm công nghệ");
+            System.out.printf("| %-3s | %-50s |\n", "3", "Sửa công nghệ");
+            System.out.printf("| %-3s | %-50s |\n", "4", "Xóa công nghệ");
+            System.out.printf("| %-3s | %-50s |\n", "0", "Quay về menu chính");
+
+            System.out.println(Color.GREEN + Color.repeat("-", Color.WIDTH) + Color.RESET);
+            choice = Validator.validateInputInt(scanner, Color.CYAN + "Mời bạn chọn: " + Color.RESET);
 
             switch (choice) {
                 case 1:
@@ -35,15 +40,16 @@ public class TechnologyUI {
                 case 4:
                     deleteTechnology();
                     break;
-                case 5:
-                    System.out.println("\nLoading...");
+                case 0:
+                    System.out.println("\nĐang quay về menu chính...");
                     pause(1);
                     break;
                 default:
-                    System.out.println("Không hợp lệ, vui lòng chọn từ 1 đến 5.");
+                    System.out.println(Color.RED + "Lựa chọn không hợp lệ, vui lòng thử lại." + Color.RESET);
             }
-        } while (choice != 5);
+        } while (choice != 0);
     }
+
 
     private static Technology findTechnologyById(int id) {
         Technology tech = technologyService.getTechnologyById(id);
@@ -54,42 +60,86 @@ public class TechnologyUI {
     }
 
     private static void showAllTechnology() {
-        int totalPage = technologyService.getTotalPage(LIMIT);
+        int limit = Validator.validateInputInt(scanner, Color.CYAN + "Nhập số công nghệ muốn hiển thị trên 1 trang: " + Color.RESET);
+        int totalPage = technologyService.getTotalPage(limit);
 
         if (totalPage == 0) {
-            System.out.println("Không có công nghệ nào để hiển thị.");
+            System.out.println(Color.YELLOW + "Không có công nghệ nào để hiển thị." + Color.RESET);
             return;
         }
 
+        int currentPage = 1;
+        int idWidth = 5;
+        int nameWidth = 40;
+
         while (true) {
-            System.out.println("\n== DANH SÁCH TRANG CÔNG NGHỆ ==");
+            System.out.println("\n" + Color.BOLD + Color.BLUE + "== CÔNG NGHỆ TRANG " + currentPage + " / " + totalPage + " ==" + Color.RESET);
+
+            String top = "┌" + "─".repeat(idWidth + 2) + "┬" + "─".repeat(nameWidth + 2) + "┐";
+            String mid = "├" + "─".repeat(idWidth + 2) + "┼" + "─".repeat(nameWidth + 2) + "┤";
+            String bot = "└" + "─".repeat(idWidth + 2) + "┴" + "─".repeat(nameWidth + 2) + "┘";
+            String header = String.format("│ %-"+idWidth+"s │ %-"+nameWidth+"s │", "ID", "Tên Công Nghệ");
+
+            System.out.println(Color.BOLD + top + Color.RESET);
+            System.out.println(Color.BOLD + header + Color.RESET);
+            System.out.println(Color.BOLD + mid + Color.RESET);
+
+            technologyService.getTechnologyByPage(currentPage, limit)
+                    .forEach(tech -> System.out.printf("│ %-" + idWidth + "d │ %-" + nameWidth + "s │\n", tech.getId(), tech.getName()));
+
+            System.out.println(Color.BOLD + bot + Color.RESET);
+
+            // Hiển thị số trang
+            System.out.print("Trang: ");
             for (int i = 1; i <= totalPage; i++) {
-                System.out.printf("%d. Trang %d\n", i, i);
-            }
-            System.out.println("0. Thoát");
-
-            int pageChoice;
-            do {
-                try {
-                    pageChoice = Validator.validateInputInt(scanner, "Chọn trang muốn xem: ");
-                } catch (NumberFormatException e) {
-                    pageChoice = -1;
+                if (i == currentPage) {
+                    System.out.print(Color.GREEN + "[" + i + "] " + Color.RESET);
+                } else {
+                    System.out.print("[" + i + "] ");
                 }
-            } while (pageChoice < 0 || pageChoice > totalPage);
+            }
+            System.out.println();
 
-            if (pageChoice == 0) {
-                System.out.println("Thoát khỏi hiển thị công nghệ.");
-                pause(1);
-                break;
+            if (totalPage == 1) {
+                System.out.println(Color.YELLOW + "0. Thoát" + Color.RESET);
+            } else {
+                if (currentPage > 1) System.out.println(Color.CYAN + "p. Trang trước" + Color.RESET);
+                if (currentPage < totalPage) System.out.println(Color.CYAN + "n. Trang tiếp theo" + Color.RESET);
+                System.out.println(Color.CYAN + "s. Nhập trang muốn hiển thị" + Color.RESET);
+                System.out.println(Color.YELLOW + "0. Thoát" + Color.RESET);
             }
 
-            System.out.println("\n== CÔNG NGHỆ TRANG " + pageChoice + " ==");
-            System.out.println("+-----+--------------------------------+");
-            System.out.printf("| %-3s | %-30s |\n", "ID", "Tên Công Nghệ");
-            System.out.println("+-----+--------------------------------+");
-            technologyService.getTechnologyByPage(pageChoice, LIMIT)
-                    .forEach(tech -> System.out.printf("| %-3d | %-30s |\n", tech.getId(), tech.getName()));
-            System.out.println("+-----+--------------------------------+");
+            String choice = Util.ValidateChoicePagination(scanner);
+            switch (choice) {
+                case "0" -> {
+                    System.out.println(Color.YELLOW + "Thoát khỏi hiển thị công nghệ." + Color.RESET);
+                    pause(1);
+                    return;
+                }
+                case "p" -> {
+                    if (currentPage > 1) {
+                        currentPage--;
+                    } else {
+                        System.err.println(Color.RED + "Bạn đang ở trang đầu tiên." + Color.RESET);
+                    }
+                }
+                case "n" -> {
+                    if (currentPage < totalPage) {
+                        currentPage++;
+                    } else {
+                        System.err.println(Color.RED + "Bạn đang ở trang cuối cùng." + Color.RESET);
+                    }
+                }
+                case "s" -> {
+                    int newPage = Validator.validateInputInt(scanner, Color.CYAN + "Nhập trang muốn xem (1 - " + totalPage + "): " + Color.RESET);
+                    if (newPage >= 1 && newPage <= totalPage) {
+                        currentPage = newPage;
+                    } else {
+                        System.err.println(Color.RED + "Số trang không hợp lệ." + Color.RESET);
+                    }
+                }
+                default -> System.err.println(Color.RED + "Lựa chọn không hợp lệ." + Color.RESET);
+            }
         }
     }
 

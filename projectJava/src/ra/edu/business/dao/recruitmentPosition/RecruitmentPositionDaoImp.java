@@ -76,7 +76,7 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa vị trí tuyển dụng: " + e.getMessage());
+            System.err.println(e.getMessage());
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }

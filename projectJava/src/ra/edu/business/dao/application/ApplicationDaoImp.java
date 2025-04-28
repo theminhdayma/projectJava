@@ -3,6 +3,7 @@ package ra.edu.business.dao.application;
 import ra.edu.business.model.application.Application;
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.application.Progress;
+import ra.edu.business.model.application.ResultInterview;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -32,7 +33,11 @@ public class ApplicationDaoImp implements ApplicationDao {
                 return true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi thêm đơn ứng tuyển: " + e.getMessage());
+            if ("45000".equals(e.getSQLState())) {
+                System.err.println(e.getMessage());
+            } else {
+                System.err.println("Lỗi thêm ứng viên: " + e.getMessage());
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -86,16 +91,34 @@ public class ApplicationDaoImp implements ApplicationDao {
                 if (progressStr != null) {
                     application.setProgress(Progress.valueOf(progressStr));
                 }
-                application.setCreateAt(rs.getDate("createAt").toLocalDate());
-                Date interviewDate = rs.getDate("interviewDate");
-                if (interviewDate != null) {
-                    application.setInterviewDate(interviewDate.toLocalDate().atTime(0, 0));
+                String resultInterviewStr = rs.getString("resultInterview");
+                if (resultInterviewStr != null) {
+                    application.setResultInterview(ResultInterview.valueOf(resultInterviewStr.toUpperCase()));
                 }
+                Timestamp interviewTimestamp = rs.getTimestamp("interviewDate");
+                if (interviewTimestamp != null) {
+                    application.setInterviewDate(interviewTimestamp.toLocalDateTime());
+                }
+                Timestamp confirmInterviewDate = rs.getTimestamp("confirmInterviewDate");
+                if (confirmInterviewDate != null) {
+                    application.setConfirmInterviewDate(confirmInterviewDate.toLocalDateTime());
+                }
+                String confirmInterviewDateReason = rs.getString("confirmInterviewDateReason");
+                if (confirmInterviewDateReason != null) {
+                    application.setConfirmInterviewDateReason(confirmInterviewDateReason);
+                }
+                application.setCreateAt(rs.getDate("createAt").toLocalDate());
 
                 Date destroyDate = rs.getDate("destroyAt");
                 if (destroyDate != null) {
                     application.setDestroyDate(destroyDate.toLocalDate());
                 }
+                Date rejectedAt = rs.getDate("rejectedAt");
+                if (rejectedAt != null) {
+                    application.setRejectedAt(rejectedAt.toLocalDate());
+                }
+                application.setDestroyReason(rs.getString("destroyReason"));
+                application.setRejectedReason(rs.getString("rejectedReason"));
                 applicationList.add(application);
             }
         } catch (SQLException e) {
@@ -127,15 +150,34 @@ public class ApplicationDaoImp implements ApplicationDao {
                 if (progressStr != null) {
                     application.setProgress(Progress.valueOf(progressStr));
                 }
-                application.setCreateAt(rs.getDate("createAt").toLocalDate());
-                Date interviewDate = rs.getDate("interviewDate");
-                if (interviewDate != null) {
-                    application.setInterviewDate(interviewDate.toLocalDate().atTime(0, 0));
+                String resultInterviewStr = rs.getString("resultInterview");
+                if (resultInterviewStr != null) {
+                    application.setResultInterview(ResultInterview.valueOf(resultInterviewStr.toUpperCase()));
                 }
+                Timestamp interviewTimestamp = rs.getTimestamp("interviewDate");
+                if (interviewTimestamp != null) {
+                    application.setInterviewDate(interviewTimestamp.toLocalDateTime());
+                }
+                Timestamp confirmInterviewDate = rs.getTimestamp("confirmInterviewDate");
+                if (confirmInterviewDate != null) {
+                    application.setConfirmInterviewDate(confirmInterviewDate.toLocalDateTime());
+                }
+                String confirmInterviewDateReason = rs.getString("confirmInterviewDateReason");
+                if (confirmInterviewDateReason != null) {
+                    application.setConfirmInterviewDateReason(confirmInterviewDateReason);
+                }
+                application.setCreateAt(rs.getDate("createAt").toLocalDate());
+
                 Date destroyDate = rs.getDate("destroyAt");
                 if (destroyDate != null) {
                     application.setDestroyDate(destroyDate.toLocalDate());
                 }
+                Date rejectedAt = rs.getDate("rejectedAt");
+                if (rejectedAt != null) {
+                    application.setRejectedAt(rejectedAt.toLocalDate());
+                }
+                application.setDestroyReason(rs.getString("destroyReason"));
+                application.setRejectedReason(rs.getString("rejectedReason"));
                 applicationList.add(application);
             }
         } catch (SQLException e) {
@@ -165,28 +207,38 @@ public class ApplicationDaoImp implements ApplicationDao {
                 application.setCandidateId(rs.getInt("candidateId"));
                 application.setRecruitmentPositionId(rs.getInt("recruitmentPositionId"));
                 application.setCvUrl(rs.getString("cvUrl"));
-
-                String progressStr = rs.getString("progress");
+                String progressStr = rs.getString("progress").toUpperCase();
                 if (progressStr != null) {
-                    application.setProgress(Progress.valueOf(progressStr.toUpperCase()));
+                    application.setProgress(Progress.valueOf(progressStr));
                 }
-
-                Date createDate = rs.getDate("createAt");
-                if (createDate != null) {
-                    application.setCreateAt(createDate.toLocalDate());
+                String resultInterviewStr = rs.getString("resultInterview");
+                if (resultInterviewStr != null) {
+                    application.setResultInterview(ResultInterview.valueOf(resultInterviewStr.toUpperCase()));
                 }
-
-                Date interviewDate = rs.getDate("interviewDate");
-                if (interviewDate != null) {
-                    application.setInterviewDate(interviewDate.toLocalDate().atTime(0, 0));
+                Timestamp interviewTimestamp = rs.getTimestamp("interviewDate");
+                if (interviewTimestamp != null) {
+                    application.setInterviewDate(interviewTimestamp.toLocalDateTime());
                 }
+                Timestamp confirmInterviewDate = rs.getTimestamp("confirmInterviewDate");
+                if (confirmInterviewDate != null) {
+                    application.setConfirmInterviewDate(confirmInterviewDate.toLocalDateTime());
+                }
+                String confirmInterviewDateReason = rs.getString("confirmInterviewDateReason");
+                if (confirmInterviewDateReason != null) {
+                    application.setConfirmInterviewDateReason(confirmInterviewDateReason);
+                }
+                application.setCreateAt(rs.getDate("createAt").toLocalDate());
 
                 Date destroyDate = rs.getDate("destroyAt");
                 if (destroyDate != null) {
                     application.setDestroyDate(destroyDate.toLocalDate());
                 }
-
+                Date rejectedAt = rs.getDate("rejectedAt");
+                if (rejectedAt != null) {
+                    application.setRejectedAt(rejectedAt.toLocalDate());
+                }
                 application.setDestroyReason(rs.getString("destroyReason"));
+                application.setRejectedReason(rs.getString("rejectedReason"));
             }
 
         } catch (SQLException e) {
@@ -196,6 +248,26 @@ public class ApplicationDaoImp implements ApplicationDao {
         }
 
         return application;
+    }
+
+    @Override
+    public boolean updateProgressConfirmInterviewDate(int id, LocalDateTime date, String confirmInterviewDateReason) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL update_to_wait_interviewing_date(?, ?, ?)}");
+            callSt.setInt(1, id);
+            callSt.setTimestamp(2, Timestamp.valueOf(date));
+            callSt.setString(3, confirmInterviewDateReason);
+            int result = callSt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.getMessage();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return false;
     }
 
     @Override
@@ -211,6 +283,43 @@ public class ApplicationDaoImp implements ApplicationDao {
             return result > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi cập nhật trạng thái phỏng vấn: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean candidateConfirmInterviewDate(int id) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL ApplicationDaoImp(?)}");
+            callSt.setInt(1, id);
+            int result = callSt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi xác nhận ngày phỏng vấn của ứng viên: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean adminConfirmInterviewDate(int id, LocalDateTime date) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL update_to_interviewing_confirm(?, ?)}");
+            callSt.setInt(1, id);
+            callSt.setTimestamp(2, Timestamp.valueOf(date));
+            int result = callSt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi xác nhận ngày phỏng vấn của quản trị viên: " + e.getMessage());
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -237,13 +346,51 @@ public class ApplicationDaoImp implements ApplicationDao {
     }
 
     @Override
-    public boolean updateProgressDone(int id) {
+    public boolean updateProgressReject(int id, String reason) {
         Connection conn = null;
         CallableStatement callSt = null;
         try {
             conn = ConnectionDB.openConnection();
-            callSt = conn.prepareCall("{CALL update_progress_done(?)}");
+            callSt = conn.prepareCall("{CALL update_to_rejected(?, ?)}");
             callSt.setInt(1, id);
+            callSt.setString(2, reason);
+            int result = callSt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            e.getMessage();
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateProgressHanding(int id) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL update_progress_handing(?)}");
+            callSt.setInt(1, id);
+            int result = callSt.executeUpdate();
+            return result > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi cập nhật trạng thái: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean updateProgressDone(int id, String resultInterview) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL update_progress_done(?, ?)}");
+            callSt.setInt(1, id);
+            callSt.setString(2, resultInterview);
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
@@ -275,15 +422,34 @@ public class ApplicationDaoImp implements ApplicationDao {
                 if (progressStr != null) {
                     application.setProgress(Progress.valueOf(progressStr));
                 }
-                application.setCreateAt(rs.getDate("createAt").toLocalDate());
-                Date interviewDate = rs.getDate("interviewDate");
-                if (interviewDate != null) {
-                    application.setInterviewDate(interviewDate.toLocalDate().atTime(0, 0));
+                String resultInterviewStr = rs.getString("resultInterview");
+                if (resultInterviewStr != null) {
+                    application.setResultInterview(ResultInterview.valueOf(resultInterviewStr.toUpperCase()));
                 }
+                Timestamp interviewTimestamp = rs.getTimestamp("interviewDate");
+                if (interviewTimestamp != null) {
+                    application.setInterviewDate(interviewTimestamp.toLocalDateTime());
+                }
+                Timestamp confirmInterviewDate = rs.getTimestamp("confirmInterviewDate");
+                if (confirmInterviewDate != null) {
+                    application.setConfirmInterviewDate(confirmInterviewDate.toLocalDateTime());
+                }
+                String confirmInterviewDateReason = rs.getString("confirmInterviewDateReason");
+                if (confirmInterviewDateReason != null) {
+                    application.setConfirmInterviewDateReason(confirmInterviewDateReason);
+                }
+                application.setCreateAt(rs.getDate("createAt").toLocalDate());
+
                 Date destroyDate = rs.getDate("destroyAt");
                 if (destroyDate != null) {
                     application.setDestroyDate(destroyDate.toLocalDate());
                 }
+                Date rejectedAt = rs.getDate("rejectedAt");
+                if (rejectedAt != null) {
+                    application.setRejectedAt(rejectedAt.toLocalDate());
+                }
+                application.setDestroyReason(rs.getString("destroyReason"));
+                application.setRejectedReason(rs.getString("rejectedReason"));
                 applicationList.add(application);
             }
         } catch (SQLException e) {

@@ -1,9 +1,9 @@
 package ra.edu.business.dao.technology;
 
 import ra.edu.business.config.ConnectionDB;
-import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.technology.StatusTechnology;
 import ra.edu.business.model.technology.Technology;
+import ra.edu.utils.Color;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ public class TechnologyDaoImp implements TechnologyDao {
             return true;
         } catch (SQLException e) {
             if ("45000".equals(e.getSQLState())) {
-                System.err.println(e.getMessage());
+                System.err.println(Color.RED + e.getMessage() + Color.RESET);
             } else {
-                System.err.println("Lỗi khác: " + e.getMessage());
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
             }
             return false;
         } finally {
@@ -52,7 +52,7 @@ public class TechnologyDaoImp implements TechnologyDao {
                 technologyList.add(technology);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(Color.RED + "Lỗi khi lấy tất cả công nghệ: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -80,7 +80,7 @@ public class TechnologyDaoImp implements TechnologyDao {
                 technologyList.add(technology);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(Color.RED + "Lỗi khi lấy công nghệ theo vị trí tuyển dụng: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -103,7 +103,7 @@ public class TechnologyDaoImp implements TechnologyDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lưu công nghệ: " + e.getMessage());
+            System.err.println(Color.RED + "Lỗi khi lưu công nghệ: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -126,7 +126,7 @@ public class TechnologyDaoImp implements TechnologyDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi: " + e.getMessage());
+            System.err.println(Color.RED + "Lỗi khi cập nhật công nghệ: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -144,7 +144,11 @@ public class TechnologyDaoImp implements TechnologyDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            if ("45000".equals(e.getSQLState())) {
+                System.out.println(Color.RED + "Không thể xóa công nghệ này vì nó đang được sử dụng." + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khi xóa công nghệ: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -169,7 +173,7 @@ public class TechnologyDaoImp implements TechnologyDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(Color.RED + "Lỗi khi lấy tổng số trang: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -196,7 +200,7 @@ public class TechnologyDaoImp implements TechnologyDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(Color.RED + "Lỗi khi lấy công nghệ theo trang: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -221,12 +225,11 @@ public class TechnologyDaoImp implements TechnologyDao {
                 tech.setName(rs.getString("name"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(Color.RED + "Lỗi khi lấy công nghệ theo id: " + e.getMessage() + Color.RESET);
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
 
         return tech;
     }
-
 }

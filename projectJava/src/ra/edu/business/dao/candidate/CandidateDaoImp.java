@@ -6,10 +6,13 @@ import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.account.Role;
 import ra.edu.business.model.candidate.Candidate;
 import ra.edu.business.model.candidate.Gender;
+import ra.edu.utils.SendEmail;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ra.edu.utils.SendEmail.sendPasswordEmail;
 
 public class CandidateDaoImp implements CandidateDao {
 
@@ -45,7 +48,6 @@ public class CandidateDaoImp implements CandidateDao {
 
     @Override
     public boolean save(Candidate candidate) {
-
         Connection conn = null;
         CallableStatement callSt = null;
         try {
@@ -58,14 +60,21 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.setString(5, candidate.getGender().name());
             callSt.setString(6, candidate.getDescription());
             callSt.setDate(7, Date.valueOf(candidate.getDob()));
-            callSt.setString(8, candidate.getAccount().getPassword());
 
-            callSt.registerOutParameter(9, Types.INTEGER);
+            callSt.registerOutParameter(8, Types.INTEGER);
+            callSt.registerOutParameter(9, Types.VARCHAR);
 
             int result = callSt.executeUpdate();
             if (result > 0) {
-                int generatedId = callSt.getInt(9);
+                int generatedId = callSt.getInt(8);
+                String randomPassword = callSt.getString(9);
+
                 candidate.setId(generatedId);
+                candidate.getAccount().setPassword(randomPassword);
+
+                SendEmail sendEmail = new SendEmail();
+                sendEmail.sendPasswordEmail(candidate.getEmail(), randomPassword);
+
                 return true;
             }
         } catch (SQLException e) {
@@ -113,7 +122,9 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi xóa ứng viên: " + e.getMessage());
+            if ("45000".equals(e.getSQLState())) {
+                System.out.println(e.getMessage());
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -257,6 +268,28 @@ public class CandidateDaoImp implements CandidateDao {
                 return true;
             } else {
                 System.err.println("Lỗi kiểm tra email: " + e.getMessage());
+            }
+            return false;
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+    }
+
+    @Override
+    public boolean checkPhoneCandidate(String phone) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL check_phone_candidate(?)}");
+            callSt.setString(1, phone);
+            callSt.execute();
+            return false;
+        } catch (SQLException e) {
+            if ("45000".equals(e.getSQLState())) {
+                return true;
+            } else {
+                System.err.println("Lỗi kiểm tra số điện thoại: " + e.getMessage());
             }
             return false;
         } finally {
@@ -451,7 +484,7 @@ public class CandidateDaoImp implements CandidateDao {
         try {
             conn = ConnectionDB.openConnection();
             callSt = conn.prepareCall("{CALL filter_by_gender(?)}");
-            callSt.setString(1, gender); // "MALE", "FEMALE", "OTHER"
+            callSt.setString(1, gender);
             rs = callSt.executeQuery();
 
             while (rs.next()) {
@@ -478,6 +511,49 @@ public class CandidateDaoImp implements CandidateDao {
 
         } catch (SQLException e) {
             System.err.println("Lỗi lọc theo giới tính: " + e.getMessage());
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Candidate> filterByCandidateTechnology(int technologyId) {
+        List<Candidate> list = new ArrayList<>();
+        Connection conn = null;
+        CallableStatement callSt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL filter_by_candidate_technology(?)}");
+            callSt.setInt(1, technologyId);
+            rs = callSt.executeQuery();
+
+            while (rs.next()) {
+                Candidate candidate = new Candidate();
+                candidate.setId(rs.getInt("id"));
+                candidate.setName(rs.getString("name"));
+                candidate.setEmail(rs.getString("email"));
+                candidate.setPhone(rs.getString("phone"));
+                candidate.setExperience(rs.getInt("experience"));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDob(rs.getDate("dob").toLocalDate());
+                Account account = new Account();
+                String statusStr = rs.getString("status");
+                if (statusStr != null) {
+                    account.setStatus(AccountStatus.valueOf(statusStr));
+                }
+                candidate.setAccount(account);
+
+                list.add(candidate);
+            }
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }

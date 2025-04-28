@@ -11,8 +11,13 @@ public interface ApplicationDao {
     List<Application> getApplicationByPage(int page, int limit);
     List<Application> getAllApplicationCandidateLogin(int candidateId);
     Application getApplicationById(int id);
+    boolean updateProgressConfirmInterviewDate(int id, LocalDateTime date, String confirmInterviewDateReason);
     boolean updateProgressInterviewing(int id, LocalDateTime date);
+    boolean candidateConfirmInterviewDate(int id);
+    boolean adminConfirmInterviewDate(int id, LocalDateTime date);
     boolean updateProgressDestroy(int id, String reason);
-    boolean updateProgressDone(int id);
+    boolean updateProgressReject(int id, String reason);
+    boolean updateProgressHanding(int id);
+    boolean updateProgressDone(int id, String resultInterview);
     List<Application> getAllApplicationByProgress(String progress);
 }

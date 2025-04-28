@@ -11,6 +11,7 @@ public interface CandidateDao extends AppDao<Candidate> {
     List<Candidate> getCandidateByPage(int page, int limit);
     Candidate getCandidateById(int id);
     boolean checkEmailCandidate(String email);
+    boolean checkPhoneCandidate(String phone);
     boolean lockCandidateAccount(int candidateId);
     boolean unlockCandidateAccount(int candidateId);
     boolean resetCandidatePassword(int candidateId, String newPassword);
@@ -18,6 +19,7 @@ public interface CandidateDao extends AppDao<Candidate> {
     List<Candidate> filterByExperience(int minExperience);
     List<Candidate> filterByAgeRange(int minAge, int maxAge);
     List<Candidate> filterByGender(String gender);
+    List<Candidate> filterByCandidateTechnology(int technologyId);
     boolean changePasswordCandidate(int accountId, String newPassword);
     Candidate getCandidateByEmail(String email);
 }

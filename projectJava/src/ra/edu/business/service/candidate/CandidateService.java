@@ -18,6 +18,8 @@ public interface CandidateService extends AppService<Candidate> {
     List<Candidate> filterByExperience(int minExperience);
     List<Candidate> filterByAgeRange(int minAge, int maxAge);
     List<Candidate> filterByGender(String gender);
+    List<Candidate> filterByCandidateTechnology(int technologyId);
     boolean changePasswordCandidate(int accountId, String newPassword);
     Candidate getCandidateByEmail(String email);
+    boolean checkPhoneCandidate(String phone);
 }

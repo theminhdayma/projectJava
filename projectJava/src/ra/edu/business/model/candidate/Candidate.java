@@ -1,6 +1,8 @@
 package ra.edu.business.model.candidate;
 
 import ra.edu.business.model.account.Account;
+import ra.edu.business.service.candidate.CandidateService;
+import ra.edu.business.service.candidate.CandidateServiceImp;
 import ra.edu.validate.candidate.CandidateValidate;
 
 import java.io.Serializable;
@@ -9,6 +11,7 @@ import java.time.LocalDate;
 import static ra.edu.MainApplication.scanner;
 
 public class Candidate implements Serializable {
+    private static final CandidateService candidateService = new CandidateServiceImp();
     private int id;
     private Account account;
     private String name;
@@ -116,6 +119,5 @@ public class Candidate implements Serializable {
         this.description = CandidateValidate.inputValidDes(scanner);
         this.dob = CandidateValidate.inputValidDob(scanner);
         this.account.setUsername(this.email);
-        this.account.setPassword(CandidateValidate.inputValidPassword(scanner, "Nhập mật khẩu: "));
     }
 }

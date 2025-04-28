@@ -11,6 +11,7 @@ import ra.edu.business.service.recruitmentPosition.RecruitmentPositionService;
 import ra.edu.business.service.recruitmentPosition.RecruitmentPositionServiceImp;
 import ra.edu.business.service.technology.TechnologyService;
 import ra.edu.business.service.technology.TechnologyServiceImp;
+import ra.edu.utils.Color;
 import ra.edu.validate.Validator;
 
 import java.util.List;
@@ -28,11 +29,17 @@ public class RecruitmentPositionAndApply {
     public static void recruitmentPositionAndApply() {
         int choice;
         do {
-            System.out.println("\n====== MENU ỨNG TUYỂN ======");
-            System.out.println("1. Xem các vị trị ứng tuyển");
-            System.out.println("2. Chi tiết vị trí ứng tuyển và ứng tuyển");
-            System.out.println("3. Quay lại menu chính");
-            choice = Validator.validateInputInt(scanner, "Nhập lựa chọn của bạn: ");
+            System.out.println("\n" + Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.BOLD + Color.center("MENU ỨNG TUYỂN", Color.WIDTH) + Color.RESET);
+            System.out.println(Color.GREEN + Color.repeat("=", Color.WIDTH) + Color.RESET);
+
+            System.out.printf("| %-3s | %-50s |\n", "1", "Xem các vị trí ứng tuyển");
+            System.out.printf("| %-3s | %-50s |\n", "2", "Chi tiết vị trí ứng tuyển và ứng tuyển");
+            System.out.printf("| %-3s | %-50s |\n", "0", "Quay lại menu chính");
+
+            System.out.println(Color.GREEN + Color.repeat("-", Color.WIDTH) + Color.RESET);
+
+            choice = Validator.validateInputInt(scanner, Color.CYAN + "Nhập lựa chọn của bạn: " + Color.RESET);
 
             switch (choice) {
                 case 1:
@@ -41,15 +48,13 @@ public class RecruitmentPositionAndApply {
                 case 2:
                     showRecruitmentPositionDetails();
                     break;
-                case 3:
-                    System.out.println("Quay lại menu chính.");
-                    System.out.println("Loading...");
+                case 0:
                     pause(1);
                     break;
                 default:
-                    System.out.println("Lựa chọn không hợp lệ. Vui lòng chọn lại.");
+                    System.out.println(Color.RED + "Lựa chọn không hợp lệ, vui lòng chọn lại." + Color.RESET);
             }
-        } while (choice != 3);
+        } while (choice != 0);
     }
 
     private static void showRecruitmentPosition() {
