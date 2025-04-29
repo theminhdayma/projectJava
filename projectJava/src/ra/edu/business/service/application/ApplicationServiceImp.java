@@ -81,4 +81,9 @@ public class ApplicationServiceImp implements ApplicationService {
     public List<Application> getAllApplicationByProgress(String progress) {
         return applicationDao.getAllApplicationByProgress(progress);
     }
+
+    @Override
+    public List<Application> getAllApplicationByResultInterview(String resultInterview) {
+        return applicationDao.getAllApplicationByResultInterview(resultInterview);
+    }
 }

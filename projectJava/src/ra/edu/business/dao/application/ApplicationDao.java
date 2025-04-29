@@ -20,4 +20,5 @@ public interface ApplicationDao {
     boolean updateProgressHanding(int id);
     boolean updateProgressDone(int id, String resultInterview);
     List<Application> getAllApplicationByProgress(String progress);
+    List<Application> getAllApplicationByResultInterview(String resultInterview);
 }

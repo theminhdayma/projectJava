@@ -67,7 +67,7 @@ public class CandidateValidate {
         String email;
         do {
             System.out.print("Nhập email: ");
-            email = scanner.nextLine().trim();
+            email = scanner.nextLine().trim().toLowerCase();
 
             if (email.isEmpty()) {
                 System.out.println(Color.RED + "Email không được để trống." + Color.RESET);
@@ -87,7 +87,7 @@ public class CandidateValidate {
         String email;
         do {
             System.out.print("Nhập email: ");
-            email = scanner.nextLine().trim();
+            email = scanner.nextLine().trim().toLowerCase();
 
             if (email.isEmpty()) {
                 System.out.println(Color.RED + "Email không được để trống." + Color.RESET);

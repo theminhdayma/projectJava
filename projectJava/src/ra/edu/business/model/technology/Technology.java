@@ -1,11 +1,8 @@
 package ra.edu.business.model.technology;
 
-import ra.edu.validate.StringRule;
 import ra.edu.validate.technology.TechnologyValidate;
 
 import static ra.edu.MainApplication.scanner;
-import static ra.edu.validate.Validator.validateInputString;
-import static ra.edu.validate.technology.TechnologyValidate.checkTechnologyName;
 
 public class Technology {
     private int id;

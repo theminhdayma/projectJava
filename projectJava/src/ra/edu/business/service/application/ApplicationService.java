@@ -2,7 +2,6 @@ package ra.edu.business.service.application;
 
 import ra.edu.business.model.application.Application;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,4 +20,5 @@ public interface ApplicationService {
     boolean updateProgressHanding(int id);
     boolean updateProgressDone(int id, String nodeDone);
     List<Application> getAllApplicationByProgress(String progress);
+    List<Application> getAllApplicationByResultInterview(String resultInterview);
 }

@@ -22,12 +22,11 @@ public class Application {
     private LocalDate rejectedAt;
     private String rejectedReason;
     private LocalDate destroyDate;
-    private String nodeDone;
 
     public Application() {
     };
 
-    public Application(int id, int candidateId, int recruitmentPositionId, String cvUrl, Progress progress, ResultInterview resultInterview, LocalDate createAt, LocalDateTime interviewDate, LocalDateTime confirmInterviewDate,String confirmInterviewDateReason, String destroyReason, LocalDate rejectedAt, String rejectedReason, LocalDate destroyDate, String nodeDone) {
+    public Application(int id, int candidateId, int recruitmentPositionId, String cvUrl, Progress progress, ResultInterview resultInterview, LocalDate createAt, LocalDateTime interviewDate, LocalDateTime confirmInterviewDate,String confirmInterviewDateReason, String destroyReason, LocalDate rejectedAt, String rejectedReason, LocalDate destroyDate) {
         this.id = id;
         this.candidateId = candidateId;
         this.recruitmentPositionId = recruitmentPositionId;
@@ -42,7 +41,6 @@ public class Application {
         this.rejectedAt = rejectedAt;
         this.rejectedReason = rejectedReason;
         this.destroyDate = destroyDate;
-        this.nodeDone = nodeDone;
     }
 
     public int getId() {

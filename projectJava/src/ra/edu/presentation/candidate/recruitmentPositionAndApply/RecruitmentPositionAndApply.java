@@ -58,50 +58,96 @@ public class RecruitmentPositionAndApply {
     }
 
     private static void showRecruitmentPosition() {
-        int totalPage = recruitmentPositionService.getTotalPage(LIMIT);
+        int limit = Validator.validateInputInt(scanner, Color.CYAN + "Nhập số vị trí tuyển dụng muốn hiển thị trên 1 trang: " + Color.RESET);
+        int totalPage = recruitmentPositionService.getTotalPage(limit);
 
         if (totalPage == 0) {
             System.out.println("Không có vị trí tuyển dụng nào để hiển thị.");
             return;
         }
 
+        int currentPage = 1;
+        int idWidth = 5;
+        int nameWidth = 30;
+        int descWidth = 50;
+        int salaryWidth = 20;
+
         while (true) {
-            System.out.println("\n====== DANH SÁCH VỊ TRÍ TUYỂN DỤNG ======");
-            for (int i = 1; i <= totalPage; i++) {
-                System.out.printf("%d. Trang %d\n", i, i);
-            }
-            System.out.println("0. Thoát");
+            System.out.println("\n" + Color.BOLD + Color.BLUE + "====== VỊ TRÍ TUYỂN DỤNG " + currentPage + " / " + totalPage + " ======" + Color.RESET);
 
-            int pageChoice;
-            do {
-                pageChoice = Validator.validateInputInt(scanner, "Chọn trang muốn xem: ");
-                if (pageChoice < 0 || pageChoice > totalPage) {
-                    System.err.println("Số trang không hợp lệ. Vui lòng chọn lại!");
-                }
-            } while (pageChoice < 0 || pageChoice > totalPage);
+            String top = "┌" + "─".repeat(idWidth + 2) + "┬" + "─".repeat(nameWidth + 2) + "┬" + "─".repeat(descWidth + 2) + "┬" + "─".repeat(salaryWidth + 2) + "┬" + "─".repeat(salaryWidth + 2) + "┐";
+            String mid = "├" + "─".repeat(idWidth + 2) + "┼" + "─".repeat(nameWidth + 2) + "┼" + "─".repeat(descWidth + 2) + "┼" + "─".repeat(salaryWidth + 2) + "┼" + "─".repeat(salaryWidth + 2) + "┤";
+            String bot = "└" + "─".repeat(idWidth + 2) + "┴" + "─".repeat(nameWidth + 2) + "┴" + "─".repeat(descWidth + 2) + "┴" + "─".repeat(salaryWidth + 2) + "┴" + "─".repeat(salaryWidth + 2) + "┘";
 
-            if (pageChoice == 0) {
-                System.out.println("Thoát khỏi hiển thị vị trí tuyển dụng.");
-                pause(1);
-                break;
-            }
+            System.out.println(Color.BOLD + top + Color.RESET);
+            System.out.printf(Color.BOLD + "│ %-" + idWidth + "s │ %-" + nameWidth + "s │ %-" + descWidth + "s │ %-" + salaryWidth + "s │ %-" + salaryWidth + "s │\n" + Color.RESET,
+                    "ID", "Tên vị trí", "Mô tả", "Lương tối thiểu($)", "Lương tối đa($)");
+            System.out.println(Color.BOLD + mid + Color.RESET);
 
-            System.out.println("\n\t\t\t\t\t\t\t\t\t\t== TRANG " + pageChoice + " ==");
-            System.out.println("+--------------------------------+----------------------------------------------------+--------------------+-------------------+");
-            System.out.printf("| %-30s | %-50s | %-17s | %-17s |\n", "Tên vị trí", "Mô tả", "Lương tối thiểu($)", "Lương tối đa($)");
-            System.out.println("+--------------------------------+----------------------------------------------------+--------------------+-------------------+");
-
-            recruitmentPositionService.getRecruitmentPositionByPage(pageChoice, LIMIT).forEach(recruitmentPosition -> {
-                System.out.printf("| %-30s | %-50s | %-17.2f | %-17.2f |\n",
-                        truncate(recruitmentPosition.getName(), 30),
-                        truncate(recruitmentPosition.getDescription(), 50),
+            recruitmentPositionService.getRecruitmentPositionByPage(currentPage, limit).forEach(recruitmentPosition -> {
+                System.out.printf("│ %-" + idWidth + "d │ %-" + nameWidth + "s │ %-" + descWidth + "s │ %-" + salaryWidth + ".2f │ %-" + salaryWidth + ".2f │\n",
+                        recruitmentPosition.getId(),
+                        truncate(recruitmentPosition.getName(), nameWidth),
+                        truncate(recruitmentPosition.getDescription(), descWidth),
                         recruitmentPosition.getMinSalary(),
                         recruitmentPosition.getMaxSalary());
             });
 
-            System.out.println("+--------------------------------+----------------------------------------------------+--------------------+-------------------+");
+            System.out.println(Color.BOLD + bot + Color.RESET);
+
+            System.out.print("Trang: ");
+            for (int i = 1; i <= totalPage; i++) {
+                if (i == currentPage) {
+                    System.out.print(Color.GREEN + "[" + i + "] " + Color.RESET);
+                } else {
+                    System.out.print("[" + i + "] ");
+                }
+            }
+            System.out.println();
+
+            if (totalPage == 1) {
+                System.out.println(Color.YELLOW + "0. Thoát" + Color.RESET);
+            } else {
+                if (currentPage > 1) System.out.println(Color.CYAN + "p. Trang trước" + Color.RESET);
+                if (currentPage < totalPage) System.out.println(Color.CYAN + "n. Trang tiếp theo" + Color.RESET);
+                System.out.println(Color.CYAN + "s. Nhập trang muốn hiển thị" + Color.RESET);
+                System.out.println(Color.YELLOW + "0. Thoát" + Color.RESET);
+            }
+
+            String choice = ValidateChoicePagination(scanner);
+            switch (choice) {
+                case "0" -> {
+                    System.out.println(Color.YELLOW + "Thoát khỏi hiển thị vị trí tuyển dụng." + Color.RESET);
+                    pause(1);
+                    return;
+                }
+                case "p" -> {
+                    if (currentPage > 1) {
+                        currentPage--;
+                    } else {
+                        System.err.println(Color.RED + "Bạn đang ở trang đầu tiên." + Color.RESET);
+                    }
+                }
+                case "n" -> {
+                    if (currentPage < totalPage) {
+                        currentPage++;
+                    } else {
+                        System.err.println(Color.RED + "Bạn đang ở trang cuối cùng." + Color.RESET);
+                    }
+                }
+                case "s" -> {
+                    int newPage = Validator.validateInputInt(scanner, Color.CYAN + "Nhập trang muốn xem (1 - " + totalPage + "): " + Color.RESET);
+                    if (newPage >= 1 && newPage <= totalPage) {
+                        currentPage = newPage;
+                    } else {
+                        System.err.println(Color.RED + "Số trang không hợp lệ." + Color.RESET);
+                    }
+                }
+                default -> System.err.println(Color.RED + "Lựa chọn không hợp lệ." + Color.RESET);
+            }
         }
     }
+
 
     private static List<RecruitmentPosition> getAllRecruitmentPosition() {
         return recruitmentPositionService.getAllRecruitmentPosition();
@@ -110,48 +156,77 @@ public class RecruitmentPositionAndApply {
     private static void showRecruitmentPositionDetails() {
         List<RecruitmentPosition> recruitmentPositions = getAllRecruitmentPosition();
         if (recruitmentPositions.isEmpty()) {
-            System.out.println("Không có vị trí tuyển dụng nào.");
+            System.out.println(Color.RED + "Không có vị trí tuyển dụng nào." + Color.RESET);
             return;
         }
 
-        System.out.println("Danh sách vị trí tuyển dụng:");
-        System.out.println("+--------------------------------------------+");
-        for (int i = 0; i < recruitmentPositions.size(); i++) {
-            RecruitmentPosition rp = recruitmentPositions.get(i);
-            System.out.printf("%d. [ID: %d] %s\n", i + 1, rp.getId(), rp.getName());
-        }
-        System.out.println("+--------------------------------------------+");
+        System.out.println(Color.CYAN + "\n╔════════════╦══════════════════════════════════════╗" + Color.RESET);
+        System.out.println(Color.CYAN + "║     ID     ║             TÊN VỊ TRÍ               ║" + Color.RESET);
+        System.out.println(Color.CYAN + "╠════════════╬══════════════════════════════════════╣" + Color.RESET);
 
-        int choice = Validator.validateInputInt(scanner, "Chọn vị trí tuyển dụng muốn xem chi tiết: ");
-        if (choice < 1 || choice > recruitmentPositions.size()) {
-            System.out.println("Lựa chọn không hợp lệ.");
-            return;
+        for (RecruitmentPosition rp : recruitmentPositions) {
+            System.out.printf(Color.CYAN + "║ " + Color.YELLOW + "%-10d" + Color.CYAN + " ║ " + Color.YELLOW + "%-36s" + Color.CYAN + " ║\n" + Color.RESET,
+                    rp.getId(), truncate(rp.getName(), 36));
         }
 
-        RecruitmentPosition selectedPosition = recruitmentPositions.get(choice - 1);
-        List<Technology> technologys = technologyService.getTechnologyByRecruitmentPositionId(selectedPosition.getId());
+        System.out.println(Color.CYAN + "╚════════════╩══════════════════════════════════════╝" + Color.RESET);
 
-        System.out.println("\n--- Chi tiết vị trí tuyển dụng ---");
-        System.out.println("Tên vị trí: " + selectedPosition.getName());
-        System.out.println("Mô tả: " + selectedPosition.getDescription());
-        System.out.println("Mức lương tối thiểu ($): " + selectedPosition.getMinSalary());
-        System.out.println("Mức lương tối đa ($): " + selectedPosition.getMaxSalary());
-        System.out.println("Năm kinh nghiệm tối thiểu: " + selectedPosition.getExpiredDate());
-        System.out.println("Ngày bắt đầu: " + selectedPosition.getCreatedDate());
-        System.out.println("Ngày kết thúc: " + selectedPosition.getExpiredDate());
-
-        if (technologys != null && !technologys.isEmpty()) {
-            System.out.println("\nCông nghệ yêu cầu:");
-            for (Technology tech : technologys) {
-                System.out.println("- " + tech.getName());
+        int choiceId = Validator.validateInputInt(scanner, Color.CYAN + "\nNhập ID vị trí tuyển dụng muốn xem chi tiết: " + Color.RESET);
+        RecruitmentPosition selectedPosition = null;
+        for (RecruitmentPosition rp : recruitmentPositions) {
+            if (rp.getId() == choiceId) {
+                selectedPosition = rp;
+                break;
             }
         }
 
+        if (selectedPosition == null) {
+            System.out.println(Color.RED + "Không tìm thấy vị trí tuyển dụng với ID đã nhập." + Color.RESET);
+            return;
+        }
+
+        List<Technology> technologys = technologyService.getTechnologyByRecruitmentPositionId(selectedPosition.getId());
+
+        System.out.println(Color.BLUE + "\n╔════════════════════════════════════════════════════════════════════════════════╗" + Color.RESET);
+        System.out.println(Color.BLUE + "║                         " + Color.BOLD + "CHI TIẾT VỊ TRÍ TUYỂN DỤNG" + Color.RESET + Color.BLUE + "                             ║" + Color.RESET);
+        System.out.println(Color.BLUE + "╠════════════════════════════════════════════════════════════════════════════════╣" + Color.RESET);
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "%-46s" + Color.BLUE + " ║\n" + Color.RESET,
+                "Tên vị trí", selectedPosition.getName());
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "%-46s" + Color.BLUE + " ║\n" + Color.RESET,
+                "Mô tả", truncate(selectedPosition.getDescription(), 40));
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "$%-45.2f" + Color.BLUE + " ║\n" + Color.RESET,
+                "Mức lương tối thiểu", selectedPosition.getMinSalary());
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "$%-45.2f" + Color.BLUE + " ║\n" + Color.RESET,
+                "Mức lương tối đa", selectedPosition.getMaxSalary());
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "%-46s" + Color.BLUE + " ║\n" + Color.RESET,
+                "Năm kinh nghiệm tối thiểu", selectedPosition.getMinExperience() + " năm");
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "%-46s" + Color.BLUE + " ║\n" + Color.RESET,
+                "Ngày bắt đầu", selectedPosition.getCreatedDate());
+        System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "%-46s" + Color.BLUE + " ║\n" + Color.RESET,
+                "Ngày kết thúc", selectedPosition.getExpiredDate());
+
+        if (technologys != null && !technologys.isEmpty()) {
+            System.out.println(Color.BLUE + "╠════════════════════════════════════════════════════════════════════════════════╣" + Color.RESET);
+
+            StringBuilder techNames = new StringBuilder();
+            for (int i = 0; i < technologys.size(); i++) {
+                techNames.append(technologys.get(i).getName());
+                if (i != technologys.size() - 1) {
+                    techNames.append(", ");
+                }
+            }
+
+            System.out.printf(Color.BLUE + "║ " + Color.YELLOW + "%-30s" + Color.BLUE + ": " + Color.GREEN + "%-46s" + Color.BLUE + " ║\n" + Color.RESET,
+                    "Yêu cầu công nghệ", techNames.toString());
+        }
+
+        System.out.println(Color.BLUE + "╚════════════════════════════════════════════════════════════════════════════════╝" + Color.RESET);
+
         int applyChoice;
         do {
-            applyChoice = Validator.validateInputInt(scanner, "Bạn có muốn ứng tuyển vào vị trí này không? (1: Có, 2: Không): ");
+            applyChoice = Validator.validateInputInt(scanner, Color.CYAN + "\nBạn có muốn ứng tuyển vào vị trí này không? (1: Có, 2: Không): " + Color.RESET);
             if (applyChoice != 1 && applyChoice != 2) {
-                System.out.println("Vui lòng chỉ nhập 1 (Có) hoặc 2 (Không).");
+                System.out.println(Color.RED + "Vui lòng chỉ nhập 1 (Có) hoặc 2 (Không)." + Color.RESET);
             }
         } while (applyChoice != 1 && applyChoice != 2);
 
@@ -163,12 +238,12 @@ public class RecruitmentPositionAndApply {
 
             boolean isSuccess = applicationService.addApplication(application);
             if (isSuccess) {
-                System.out.println("Ứng tuyển thành công!");
+                System.out.println(Color.GREEN + "Ứng tuyển thành công!" + Color.RESET);
             } else {
-                System.out.println("Ứng tuyển thất bại.");
+                System.out.println(Color.RED + "Ứng tuyển thất bại." + Color.RESET);
             }
         } else {
-            System.out.println("Bạn đã chọn không ứng tuyển.");
+            System.out.println(Color.YELLOW + "Bạn đã chọn không ứng tuyển." + Color.RESET);
         }
     }
 

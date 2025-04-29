@@ -28,7 +28,7 @@ public class SendEmail {
             message.setText("Xin chào, \nMật khẩu đăng nhập: " + password + "\n\nVui lòng đổi mật khẩu sau khi đăng nhập!");
 
             Transport.send(message);
-            System.out.println("Gửi email mật khẩu thành công.");
+            System.out.println( Color.ITALIC + "Gửi email mật khẩu thành công." + Color.RESET);
         } catch (MessagingException e) {
             e.printStackTrace();
         }

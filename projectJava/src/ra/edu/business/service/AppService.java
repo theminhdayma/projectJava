@@ -1,7 +1,5 @@
 package ra.edu.business.service;
 
-import java.util.List;
-
 public interface AppService<T> {
 
     boolean save(T t);

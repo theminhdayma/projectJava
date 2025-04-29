@@ -16,7 +16,7 @@ public class ConnectionDB {
         try {
             conn = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            System.err.println("Lỗi kết nối CSDL do " + e.getMessage());
+            System.err.println(e.getMessage());
         } catch (Exception e){
             System.err.println(e.getMessage());
         }

@@ -5,6 +5,7 @@ import ra.edu.business.service.technology.TechnologyServiceImp;
 import ra.edu.utils.Color;
 import ra.edu.utils.Util;
 import ra.edu.validate.Validator;
+import ra.edu.validate.technology.TechnologyValidate;
 
 import static ra.edu.MainApplication.scanner;
 import static ra.edu.utils.ThreadUtil.pause;
@@ -54,7 +55,7 @@ public class TechnologyUI {
     private static Technology findTechnologyById(int id) {
         Technology tech = technologyService.getTechnologyById(id);
         if (tech == null) {
-            System.out.println("Không tìm thấy công nghệ với ID: " + id + " Vui lòng thử lại.");
+            System.out.println( Color.RED + "Không tìm thấy công nghệ với ID: " + id + " Vui lòng thử lại." + Color.RESET);
         }
         return tech;
     }
@@ -144,18 +145,38 @@ public class TechnologyUI {
     }
 
     private static void addTechnology() {
-        int quantity = Validator.validateInputInt(scanner, "Nhập số lượng công nghệ muốn thêm: ");
+        System.out.println(Color.BOLD + Color.CYAN + "=== THÊM CÔNG NGHỆ ===" + Color.RESET);
+        int quantity = Validator.validateInputInt(scanner, Color.YELLOW + "Nhập số lượng công nghệ muốn thêm: " + Color.RESET);
 
         for (int i = 1; i <= quantity; i++) {
-            System.out.println("\n== Nhập công nghệ thứ " + i + " ==");
+            System.out.println(Color.GREEN + "\n== Nhập công nghệ thứ " + i + " ==" + Color.RESET);
             Technology newTech = new Technology();
-            newTech.inputData();
 
-            if (technologyService.save(newTech)) {
-                System.out.println("Thêm công nghệ thành công.");
+            String techName = TechnologyValidate.checkTechnologyName(scanner);
+
+            if (techName != null) {
+                newTech.setName(techName);
+
+                if (technologyService.save(newTech)) {
+                    System.out.println(Color.GREEN + "Thêm công nghệ thành công." + Color.RESET);
+                } else {
+                    System.out.println(Color.RED + "Thêm công nghệ thất bại." + Color.RESET);
+                }
             } else {
-                System.out.println("Thêm công nghệ thất bại.");
+                System.out.println(Color.RED + "Tên công nghệ không hợp lệ, không thể thêm công nghệ." + Color.RESET);
+                i--;
             }
+
+            System.out.println(Color.BLUE + "----------------------------" + Color.RESET);
+        }
+        System.out.println(Color.BOLD + Color.CYAN + "=== KẾT THÚC THÊM CÔNG NGHỆ ===" + Color.RESET);
+    }
+    private static void showTechnologyById(int id) {
+        Technology technology = technologyService.getTechnologyById(id);
+        if (technology != null) {
+            System.out.println(Color.GREEN + "Công nghệ có ID " + id + ": " + technology.getName() + Color.RESET);
+        } else {
+            System.out.println(Color.RED + "Không tìm thấy công nghệ với ID: " + id + Color.RESET);
         }
     }
 
@@ -166,12 +187,11 @@ public class TechnologyUI {
 
         while (attempts < 3) {
             id = Validator.validateInputInt(scanner, "Nhập ID công nghệ muốn sửa: ");
-
             isTechnology = findTechnologyById(id);
 
             if (isTechnology != null) {
-                System.out.print("Nhập tên mới: ");
-                String name = scanner.nextLine();
+                showTechnologyById(isTechnology.getId());
+                String name = TechnologyValidate.checkTechnologyName(scanner);
 
                 isTechnology.setName(name);
                 if (technologyService.update(isTechnology)) {
@@ -183,7 +203,8 @@ public class TechnologyUI {
             } else {
                 attempts++;
                 if (attempts == 3) {
-                    System.out.println("Quá 3 lần sai ID.");
+                    System.out.println(Color.RED + "Quá 3 lần sai ID." + Color.RESET);
+                    System.out.println(Color.YELLOW + "Hủy sửa công nghệ." + Color.RESET);
                 }
             }
         }
@@ -196,30 +217,31 @@ public class TechnologyUI {
 
         while (attempts < 3) {
             id = Validator.validateInputInt(scanner, "Nhập ID công nghệ muốn xóa: ");
-
             isTechnology = findTechnologyById(id);
 
             if (isTechnology != null) {
-                System.out.print("Bạn có chắc chắn muốn xóa công nghệ này? (1: Có, 2: Không): ");
+                showTechnologyById(isTechnology.getId());
+                System.out.print(Color.YELLOW + "Bạn có chắc chắn muốn xóa công nghệ này? (1: Có, 2: Không): " + Color.RESET);
                 int confirmation = Integer.parseInt(scanner.nextLine());
 
                 if (confirmation == 1) {
                     if (technologyService.delete(isTechnology)) {
-                        System.out.println("Xóa thành công.");
+                        System.out.println(Color.GREEN + "Xóa công nghệ thành công." + Color.RESET);
                     } else {
-                        System.out.println("Xóa thất bại.");
+                        System.out.println(Color.RED + "Xóa công nghệ thất bại." + Color.RESET);
                     }
                     return;
                 } else if (confirmation == 2) {
-                    System.out.println("Hủy bỏ thao tác xóa.");
+                    System.out.println(Color.YELLOW + "Hủy xóa công nghệ." + Color.RESET);
                     return;
                 } else {
-                    System.out.println("Lựa chọn không hợp lệ !");
+                    System.out.println(Color.RED + "Lựa chọn không hợp lệ." + Color.RESET);
                 }
             } else {
                 attempts++;
                 if (attempts == 3) {
-                    System.out.println("Quá 3 lần sai ID.");
+                    System.out.println(Color.RED + "Quá 3 lần sai ID." + Color.RESET);
+                    System.out.println(Color.YELLOW + "Hủy xóa công nghệ." + Color.RESET);
                 }
             }
         }

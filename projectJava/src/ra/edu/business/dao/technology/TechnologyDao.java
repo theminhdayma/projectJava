@@ -9,7 +9,7 @@ public interface TechnologyDao extends AppDao<Technology> {
     int getTotalPage(int limit);
     List<Technology> getTechnologyByPage(int page, int limit);
     Technology getTechnologyById(int id);
-    boolean checkNameTechnology(Technology technology);
+    boolean checkNameTechnology(String name);
     List<Technology> getAllTechnology();
     List<Technology> getTechnologyByRecruitmentPositionId(int recruitmentPositionId);
 }

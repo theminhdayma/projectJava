@@ -4,6 +4,7 @@ import ra.edu.business.model.application.Application;
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.application.Progress;
 import ra.edu.business.model.application.ResultInterview;
+import ra.edu.utils.Color;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -33,10 +34,11 @@ public class ApplicationDaoImp implements ApplicationDao {
                 return true;
             }
         } catch (SQLException e) {
-            if ("45000".equals(e.getSQLState())) {
-                System.err.println(e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
             } else {
-                System.err.println("Lỗi thêm ứng viên: " + e.getMessage());
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
             }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -62,7 +64,12 @@ public class ApplicationDaoImp implements ApplicationDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -122,7 +129,12 @@ public class ApplicationDaoImp implements ApplicationDao {
                 applicationList.add(application);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -181,7 +193,12 @@ public class ApplicationDaoImp implements ApplicationDao {
                 applicationList.add(application);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -242,7 +259,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -263,7 +285,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.getMessage();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -282,7 +309,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật trạng thái phỏng vấn: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -300,7 +332,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi xác nhận ngày phỏng vấn của ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -319,7 +356,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi xác nhận ngày phỏng vấn của quản trị viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -338,7 +380,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật trạng thái hủy: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -357,7 +404,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            e.getMessage();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -375,7 +427,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật trạng thái: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -394,7 +451,12 @@ public class ApplicationDaoImp implements ApplicationDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật trạng thái hoàn thành: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -453,7 +515,76 @@ public class ApplicationDaoImp implements ApplicationDao {
                 applicationList.add(application);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
+        } finally {
+            ConnectionDB.closeConnection(conn, callSt);
+        }
+        return applicationList;
+    }
+
+    @Override
+    public List<Application> getAllApplicationByResultInterview(String resultInterview) {
+        Connection conn = null;
+        CallableStatement callSt = null;
+        ResultSet rs = null;
+        List<Application> applicationList = new ArrayList<>();
+        try {
+            conn = ConnectionDB.openConnection();
+            callSt = conn.prepareCall("{CALL get_application_by_result_interview(?)}");
+            callSt.setString(1, resultInterview);
+            rs = callSt.executeQuery();
+            while (rs.next()) {
+                Application application = new Application();
+                application.setId(rs.getInt("id"));
+                application.setCandidateId(rs.getInt("candidateId"));
+                application.setRecruitmentPositionId(rs.getInt("recruitmentPositionId"));
+                application.setCvUrl(rs.getString("cvUrl"));
+                String progressStr = rs.getString("progress").toUpperCase();
+                if (progressStr != null) {
+                    application.setProgress(Progress.valueOf(progressStr));
+                }
+                String resultInterviewStr = rs.getString("resultInterview");
+                if (resultInterviewStr != null) {
+                    application.setResultInterview(ResultInterview.valueOf(resultInterviewStr.toUpperCase()));
+                }
+                Timestamp interviewTimestamp = rs.getTimestamp("interviewDate");
+                if (interviewTimestamp != null) {
+                    application.setInterviewDate(interviewTimestamp.toLocalDateTime());
+                }
+                Timestamp confirmInterviewDate = rs.getTimestamp("confirmInterviewDate");
+                if (confirmInterviewDate != null) {
+                    application.setConfirmInterviewDate(confirmInterviewDate.toLocalDateTime());
+                }
+                String confirmInterviewDateReason = rs.getString("confirmInterviewDateReason");
+                if (confirmInterviewDateReason != null) {
+                    application.setConfirmInterviewDateReason(confirmInterviewDateReason);
+                }
+                application.setCreateAt(rs.getDate("createAt").toLocalDate());
+
+                Date destroyDate = rs.getDate("destroyAt");
+                if (destroyDate != null) {
+                    application.setDestroyDate(destroyDate.toLocalDate());
+                }
+                Date rejectedAt = rs.getDate("rejectedAt");
+                if (rejectedAt != null) {
+                    application.setRejectedAt(rejectedAt.toLocalDate());
+                }
+                application.setDestroyReason(rs.getString("destroyReason"));
+                application.setRejectedReason(rs.getString("rejectedReason"));
+                applicationList.add(application);
+            }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }

@@ -8,10 +8,6 @@ import ra.edu.business.service.Account.AccountService;
 import ra.edu.business.service.Account.AccountServiceImp;
 import ra.edu.business.service.candidate.CandidateService;
 import ra.edu.business.service.candidate.CandidateServiceImp;
-import ra.edu.business.service.candidateTechnology.CandidateTechnologyService;
-import ra.edu.business.service.candidateTechnology.CandidateTechnologyServiceImp;
-import ra.edu.business.service.technology.TechnologyService;
-import ra.edu.business.service.technology.TechnologyServiceImp;
 import ra.edu.presentation.admin.AdminMain;
 import ra.edu.presentation.candidate.CandidateMain;
 import ra.edu.validate.Validator;
@@ -84,12 +80,12 @@ public class MainApplication {
             System.out.printf("│ %-2s │ %-34s │%n", "2", "Đăng ký ứng viên");
             System.out.println(bot);
 
-            choice = Validator.validateInputInt(scanner, Color.YELLOW + "→ Mời bạn chọn: " + Color.RESET);
+            choice = Validator.validateInputInt(scanner, Color.YELLOW + "Mời bạn chọn: " + Color.RESET);
 
             switch (choice) {
                 case 1 -> login();
                 case 2 -> registerCandidate();
-                default -> System.out.println(Color.RED + "⚠ Lựa chọn không hợp lệ. Vui lòng thử lại!" + Color.RESET);
+                default -> System.out.println(Color.RED + "Lựa chọn không hợp lệ. Vui lòng thử lại!" + Color.RESET);
             }
         } while (true);
     }
@@ -110,12 +106,12 @@ public class MainApplication {
 
                 if (account.getRole() == Role.CANDIDATE) {
                     Candidate candidate = candidateService.getCandidateByEmail(username);
-                    System.out.println(Color.GREEN + "Đăng nhập thành công!");
+                    System.out.println(Color.GREEN + "\nĐăng nhập thành công!");
                     System.out.println(Color.GREEN + "XIN CHÀO " + candidate.getName() + "!" + Color.RESET);
                     pause(1);
                     CandidateMain.displayMenuCadidateManagent();
                 } else if (account.getRole() == Role.ADMIN) {
-                    System.out.println(Color.GREEN + "Đăng nhập thành công!");
+                    System.out.println(Color.GREEN + "\nĐăng nhập thành công!");
                     System.out.println(Color.GREEN + "XIN CHÀO QUẢN TRỊ VIÊN " + account.getUsername() + "!" + Color.RESET);
                     pause(1);
                     AdminMain.displayMenuManagentAdmin();
@@ -133,9 +129,7 @@ public class MainApplication {
                             registerCandidate();
                             return;
                         }
-                        case 2 -> {
-                            validChoice = true;
-                        }
+                        case 2 -> validChoice = true;
                         case 0 -> {
                             System.out.println(Color.YELLOW + "Thoát đăng nhập!" + Color.RESET);
                             return;

@@ -4,6 +4,7 @@ import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.account.Account;
 import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.account.Role;
+import ra.edu.utils.Color;
 
 import java.sql.*;
 
@@ -23,7 +24,12 @@ public class AccountDaoImp implements AccountDao {
             callSt.execute();
             count = callSt.getInt(2);
         } catch (SQLException e) {
-            System.err.println("Lỗi kiểm tra tài khoản: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -39,8 +45,13 @@ public class AccountDaoImp implements AccountDao {
             conn = ConnectionDB.openConnection();
             callSt = conn.prepareCall("{call check_account_admin()}");
             callSt.execute();
-        } catch (Exception e) {
-            System.err.println("Lỗi trong CSDL: " + e.getMessage());
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -75,7 +86,12 @@ public class AccountDaoImp implements AccountDao {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi lấy tài khoản: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.err.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -115,9 +131,10 @@ public class AccountDaoImp implements AccountDao {
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             if ("45000".equals(sqlState)) {
-                System.err.println(e.getMessage());
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
             }
-        } finally {
+        }
+        finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
 

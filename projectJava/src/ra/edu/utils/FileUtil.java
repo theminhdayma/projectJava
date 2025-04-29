@@ -10,7 +10,7 @@ public class FileUtil {
         try (FileWriter writer = new FileWriter(FILE_NAME)) {
             writer.write(content);
         } catch (IOException e) {
-            System.out.println("Không thể ghi vào file: " + FILE_NAME);
+            System.out.println(Color.RED + "Không thể ghi vào file: " + FILE_NAME + Color.RESET);
         }
     }
 

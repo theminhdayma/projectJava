@@ -3,6 +3,7 @@ package ra.edu.business.dao.recruitmentPosition;
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.recruitmentPosition.RecruitmentPosition;
 import ra.edu.business.model.recruitmentPosition.RecruitmentPositionStatus;
+import ra.edu.utils.Color;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -33,7 +34,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
                 return true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi thêm vị trí tuyển dụng: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -58,7 +64,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi cập nhật vị trí tuyển dụng: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -76,7 +87,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -106,7 +122,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
                 recruitmentPosition.setStatus(RecruitmentPositionStatus.valueOf(rs.getString("status")));
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy vị trí tuyển dụng: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -131,7 +152,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -169,7 +195,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Lỗi phân trang vị trí tuyển dụng: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -206,7 +237,12 @@ public class RecruitmentPositionDaoImp implements RecruitmentPositionDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Lỗi lấy tất cả vị trí tuyển dụng: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }

@@ -1,8 +1,5 @@
 package ra.edu.business.model.recruitmentPositionTechnology;
 
-import ra.edu.business.model.recruitmentPosition.RecruitmentPosition;
-import ra.edu.business.model.technology.Technology;
-
 public class RecruitmentPositionTechnology {
     private int id;
     private int technologyId;

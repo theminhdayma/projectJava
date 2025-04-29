@@ -6,13 +6,12 @@ import ra.edu.business.model.account.AccountStatus;
 import ra.edu.business.model.account.Role;
 import ra.edu.business.model.candidate.Candidate;
 import ra.edu.business.model.candidate.Gender;
+import ra.edu.utils.Color;
 import ra.edu.utils.SendEmail;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static ra.edu.utils.SendEmail.sendPasswordEmail;
 
 public class CandidateDaoImp implements CandidateDao {
 
@@ -33,10 +32,11 @@ public class CandidateDaoImp implements CandidateDao {
                 isLoggedIn = true;
             }
         } catch (SQLException e) {
-            if ("45000".equals(e.getSQLState())) {
-                System.err.println("Tài khoản đã bị khóa hoặc không tồn tại.");
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
             } else {
-                System.err.println("Lỗi hệ thống: " + e.getMessage());
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
             }
             return false;
         } finally {
@@ -78,7 +78,12 @@ public class CandidateDaoImp implements CandidateDao {
                 return true;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi thêm ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi thêm ứng viên: " + e.getMessage() + Color.RESET);
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -104,7 +109,12 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi cập nhật: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi cập nhật ứng viên: " + e.getMessage() + Color.RESET);
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -122,8 +132,11 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            if ("45000".equals(e.getSQLState())) {
-                System.out.println(e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi xóa ứng viên: " + e.getMessage() + Color.RESET);
             }
             return false;
         } finally {
@@ -149,7 +162,12 @@ public class CandidateDaoImp implements CandidateDao {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi lấy tổng số trang ứng viên: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -193,7 +211,12 @@ public class CandidateDaoImp implements CandidateDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Lỗi phân trang ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi lấy danh sách ứng viên theo trang: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -245,7 +268,12 @@ public class CandidateDaoImp implements CandidateDao {
                 candidate.setAccount(account);
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi lấy chi tiết ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi lấy ứng viên theo ID: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -264,10 +292,9 @@ public class CandidateDaoImp implements CandidateDao {
             return false;
         } catch (SQLException e) {
             if ("45000".equals(e.getSQLState())) {
-                System.out.println("Email đã tồn tại trong hệ thống.");
                 return true;
             } else {
-                System.err.println("Lỗi kiểm tra email: " + e.getMessage());
+                System.out.println(Color.RED + "Lỗi kiểm tra email: " + e.getMessage() + Color.RESET);
             }
             return false;
         } finally {
@@ -289,7 +316,7 @@ public class CandidateDaoImp implements CandidateDao {
             if ("45000".equals(e.getSQLState())) {
                 return true;
             } else {
-                System.err.println("Lỗi kiểm tra số điện thoại: " + e.getMessage());
+                System.out.println(Color.RED + "Lỗi kiểm tra số điện thoại: " + e.getMessage() + Color.RESET);
             }
             return false;
         } finally {
@@ -309,7 +336,12 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi khóa tài khoản ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khóa tài khoản ứng viên: " + e.getMessage() + Color.RESET);
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -327,7 +359,12 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi mở khóa tài khoản ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi mở khóa tài khoản ứng viên: " + e.getMessage() + Color.RESET);
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -346,7 +383,12 @@ public class CandidateDaoImp implements CandidateDao {
             callSt.execute();
             return true;
         } catch (SQLException e) {
-            System.err.println("Lỗi reset mật khẩu ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi đặt lại mật khẩu ứng viên: " + e.getMessage() + Color.RESET);
+            }
             return false;
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -361,7 +403,7 @@ public class CandidateDaoImp implements CandidateDao {
         try {
             conn = ConnectionDB.openConnection();
             callSt = conn.prepareCall("{CALL search_candidate_by_name(?)}");
-            callSt.setString(1, "%" + keyword + "%");
+            callSt.setString(1, keyword.trim());
             ResultSet rs = callSt.executeQuery();
 
             while (rs.next()) {
@@ -371,6 +413,12 @@ public class CandidateDaoImp implements CandidateDao {
                 candidate.setEmail(rs.getString("email"));
                 candidate.setPhone(rs.getString("phone"));
                 candidate.setExperience(rs.getInt("experience"));
+                String genderStr = rs.getString("gender");
+                if (genderStr != null) {
+                    candidate.setGender(Gender.valueOf(genderStr));
+                }
+                candidate.setDob(rs.getDate("dob").toLocalDate());
+
                 Account account = new Account();
                 String statusStr = rs.getString("status");
                 if (statusStr != null) {
@@ -380,7 +428,12 @@ public class CandidateDaoImp implements CandidateDao {
                 candidateList.add(candidate);
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi tìm kiếm ứng viên: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi tìm kiếm ứng viên theo tên: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -423,7 +476,12 @@ public class CandidateDaoImp implements CandidateDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Lỗi lọc theo kinh nghiệm: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi lọc theo kinh nghiệm: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -467,7 +525,12 @@ public class CandidateDaoImp implements CandidateDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Lỗi lọc theo độ tuổi: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi lọc theo độ tuổi: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -510,7 +573,12 @@ public class CandidateDaoImp implements CandidateDao {
             }
 
         } catch (SQLException e) {
-            System.err.println("Lỗi lọc theo giới tính: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi lọc theo giới tính: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -553,7 +621,12 @@ public class CandidateDaoImp implements CandidateDao {
             }
 
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi lọc theo công nghệ ứng viên: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -574,7 +647,12 @@ public class CandidateDaoImp implements CandidateDao {
 
             return true;
         } catch (SQLException e) {
-            System.out.println("Lỗi: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi thay đổi mật khẩu ứng viên: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -630,7 +708,12 @@ public class CandidateDaoImp implements CandidateDao {
             }
 
         } catch (SQLException e) {
-            System.out.println("Lỗi khi lấy ứng viên theo email: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi lấy ứng viên theo email: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }

@@ -2,6 +2,7 @@ package ra.edu.business.dao.candidateTechnology;
 
 import ra.edu.business.config.ConnectionDB;
 import ra.edu.business.model.candidateTenology.CandidateTechnology;
+import ra.edu.utils.Color;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -26,10 +27,11 @@ public class CandidateTechnologyDaoImp implements CandidateTechnologyDao {
             return result > 0;
 
         } catch (SQLException e) {
-            if ("45000".equals(e.getSQLState())) {
-                System.err.println("Lỗi: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
             } else {
-                System.err.println("Lỗi thêm công nghệ cho ứng viên: " + e.getMessage());
+                System.out.println(Color.RED + "Lỗi khi thêm công nghệ của ứng viên: " + e.getMessage() + Color.RESET);
             }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
@@ -57,7 +59,12 @@ public class CandidateTechnologyDaoImp implements CandidateTechnologyDao {
                 candidateTechnologies.add(ct);
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy danh sách công nghệ của ứng viên");
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi lấy công nghệ của ứng viên: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }
@@ -76,7 +83,12 @@ public class CandidateTechnologyDaoImp implements CandidateTechnologyDao {
             int result = callSt.executeUpdate();
             return result > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa công nghệ của ứng viên");
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
+            } else {
+                System.out.println(Color.RED + "Lỗi khi xóa công nghệ của ứng viên: " + e.getMessage() + Color.RESET);
+            }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);
         }

@@ -2,6 +2,7 @@ package ra.edu.business.dao.recruitmentPositionTechnology;
 
 import ra.edu.business.model.recruitmentPositionTechnology.RecruitmentPositionTechnology;
 import ra.edu.business.config.ConnectionDB;
+import ra.edu.utils.Color;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -22,10 +23,11 @@ public class RecruitmentPositionTechnologyDaoImp implements RecruitmentPositionT
             return result > 0;
 
         } catch (SQLException e) {
-            if ("45000".equals(e.getSQLState())) {
-                System.err.println("Lỗi: " + e.getMessage());
+            String sqlState = e.getSQLState();
+            if ("45000".equals(sqlState)) {
+                System.out.println(Color.RED + e.getMessage() + Color.RESET);
             } else {
-                System.err.println("Lỗi thêm công nghệ cho vị trí tuyển dụng: " + e.getMessage());
+                System.out.println(Color.RED + "Lỗi khác: " + e.getMessage() + Color.RESET);
             }
         } finally {
             ConnectionDB.closeConnection(conn, callSt);

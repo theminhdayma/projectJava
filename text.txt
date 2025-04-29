@@ -1,1 +1,1 @@
-CANDIDATE:hoang.pham@email.com
+ADMIN:admin@gmail.com

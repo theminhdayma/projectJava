@@ -1,11 +1,6 @@
 package ra.edu.business.model.account;
 
-import ra.edu.validate.StringRule;
-import ra.edu.validate.Validator;
-
 import java.io.Serializable;
-
-import static ra.edu.MainApplication.scanner;
 
 public class Account implements Serializable {
     private int id;
